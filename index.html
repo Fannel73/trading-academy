@@ -1,0 +1,1939 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trading Academy — Lernplattform</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#14293d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Trading Academy">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-180.png">
+
+<meta name="description" content="Lokale Trading-Lernplattform. Nur Simulation, kein echtes Geld, keine Anlageberatung.">
+<style>
+/* Trading Academy — ruhig, professionell, hell. */
+:root {
+  --bg: #f4f6f9; --panel: #ffffff; --ink: #1c2733; --muted: #5a6b7f;
+  --accent: #1e5a8a; --accent-ink: #ffffff; --line: #dde4ec;
+  --ok: #1e7a4f; --ok-bg: #e9f5ee; --warn: #9a3b2e; --warn-bg: #faeeec;
+  --note-bg: #eef4fb; --radius: 12px;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+  background: var(--bg); color: var(--ink);
+}
+#app { display: flex; min-height: 100vh; }
+
+/* Navigation */
+.nav {
+  width: 210px; flex-shrink: 0; background: #14293d; color: #cfdcea;
+  padding: 20px 12px; display: flex; flex-direction: column; gap: 4px;
+  position: sticky; top: 0; height: 100vh;
+}
+.nav-brand { font-size: 19px; font-weight: 700; color: #fff; padding: 4px 10px 18px; letter-spacing: 0.2px; }
+.nav-brand span { color: #7fb2df; font-weight: 400; }
+.nav-item { color: #cfdcea; text-decoration: none; padding: 9px 10px; border-radius: 8px; font-size: 15px; }
+.nav-item:hover { background: rgba(255,255,255,0.08); }
+.nav-item.active { background: #1e5a8a; color: #fff; }
+.nav-ic { margin-right: 8px; }
+.nav-foot { margin-top: auto; font-size: 11.5px; color: #8ba1b7; padding: 10px; border-top: 1px solid rgba(255,255,255,0.12); }
+
+/* Hauptbereich */
+.main { flex: 1; max-width: 860px; padding: 28px 36px 80px; }
+h1 { font-size: 26px; margin: 6px 0 8px; }
+h2 { font-size: 19px; margin: 26px 0 10px; }
+h3 { font-size: 16.5px; margin: 22px 0 8px; }
+.section-h { margin-top: 34px; }
+.muted { color: var(--muted); }
+.small { font-size: 13.5px; }
+.back { display: inline-block; color: var(--accent); text-decoration: none; margin-bottom: 6px; font-size: 14.5px; }
+.pill { display: inline-block; background: var(--note-bg); color: var(--accent); border-radius: 999px; padding: 2px 12px; font-size: 13px; margin-left: 10px; vertical-align: middle; }
+.done-pill { background: var(--ok-bg); color: var(--ok); }
+.lesson-head { display: flex; align-items: center; flex-wrap: wrap; }
+
+/* Karten */
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; margin: 14px 0; }
+.card-kicker { font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin-bottom: 4px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 16px 0; }
+.card.stat { text-align: center; padding: 14px; margin: 0; }
+.stat-num { font-size: 30px; font-weight: 700; color: var(--accent); }
+.stat-label { font-size: 13px; color: var(--muted); }
+.next-card { border-left: 4px solid var(--accent); }
+.muted-card { background: #eef1f5; color: var(--muted); font-size: 14.5px; }
+.ok-card { background: var(--ok-bg); border-color: #bfe0cd; }
+.warn-card { background: var(--warn-bg); border-color: #eccfc9; }
+.goal { background: var(--note-bg); border-color: #cdddef; }
+.module-r { border-left: 4px solid #7a5c1e; }
+.module-r.complete { border-left-color: var(--ok); }
+
+/* Banner */
+.banner { padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; font-size: 14.5px; }
+.banner.warn { background: var(--warn-bg); border: 1px solid #eccfc9; }
+
+/* Buttons */
+.btn {
+  display: inline-block; background: #e8edf3; color: var(--ink); border: 1px solid var(--line);
+  border-radius: 9px; padding: 9px 18px; font-size: 15px; cursor: pointer; text-decoration: none;
+  margin: 6px 8px 6px 0; font-family: inherit;
+}
+.btn:hover { background: #dbe3ec; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.primary:hover { background: #17466c; }
+.btn.primary:disabled { background: #9fb4c7; border-color: #9fb4c7; cursor: not-allowed; }
+.btn.danger { background: #fbeae7; color: var(--warn); border-color: #eccfc9; }
+.btn.chip { padding: 6px 14px; font-size: 14px; }
+.btn.chip.sel-ok { background: var(--ok-bg); border-color: var(--ok); color: var(--ok); }
+.btn.chip.sel-bad { background: var(--warn-bg); border-color: var(--warn); color: var(--warn); }
+.file-btn { position: relative; overflow: hidden; }
+
+/* Lernpfad */
+.phase { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); margin: 10px 0; }
+.phase summary { display: flex; align-items: center; gap: 10px; padding: 13px 16px; cursor: pointer; list-style: none; }
+.phase summary::-webkit-details-marker { display: none; }
+.phase[data-locked="1"] summary { opacity: 0.62; }
+.ph-title { font-weight: 600; flex: 1; }
+.ph-meta { color: var(--muted); font-size: 13.5px; }
+.phase-body { padding: 4px 16px 14px; }
+.phase-locked-note { color: var(--muted); font-size: 14px; padding: 6px 2px 4px; }
+.lesson-list { margin-top: 8px; }
+.lesson-row {
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 9px;
+  text-decoration: none; color: var(--ink); border: 1px solid transparent; margin: 3px 0; font-size: 15px;
+}
+a.lesson-row:hover { background: var(--note-bg); border-color: #cdddef; }
+.lesson-row.locked, .lesson-row.planned { color: var(--muted); }
+.lesson-row.done .lr-title { color: var(--ok); }
+.lr-title { flex: 1; }
+.lr-meta { font-size: 12.5px; color: var(--muted); }
+
+/* Lektionen */
+.lesson-content p { margin: 12px 0; }
+.terms { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.term { background: var(--panel); border: 1px solid var(--line); border-radius: 9px; padding: 2px 12px; }
+.term summary { cursor: pointer; font-weight: 600; padding: 8px 0; font-size: 14.5px; }
+.term p { margin: 2px 0 10px; font-size: 14.5px; color: var(--muted); }
+.deep { background: var(--panel); border: 1px solid var(--line); border-radius: 9px; padding: 2px 14px; margin: 8px 0; }
+.deep summary { cursor: pointer; font-weight: 600; padding: 9px 0; color: var(--accent); }
+.note { background: var(--note-bg); border-radius: 10px; padding: 12px 16px; margin: 14px 0; font-size: 15px; }
+.warnbox { background: var(--warn-bg); border-radius: 10px; padding: 12px 16px; margin: 14px 0; font-size: 15px; }
+.figure { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px; margin: 16px 0; }
+.figure svg { width: 100%; height: auto; display: block; }
+.tablewrap { overflow-x: auto; margin: 14px 0; }
+table { border-collapse: collapse; width: 100%; background: var(--panel); font-size: 14.5px; }
+caption { text-align: left; font-weight: 600; padding: 6px 2px; font-size: 14px; }
+th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; }
+th { background: #eef2f7; }
+
+/* Rechner */
+.calc { background: var(--panel); border: 1px dashed #b9c8d8; border-radius: var(--radius); padding: 14px 16px; margin: 18px 0; }
+.calc-title { font-weight: 600; margin-bottom: 10px; }
+.calc-fields { display: flex; flex-wrap: wrap; gap: 12px; }
+.calc-field { display: flex; flex-direction: column; gap: 4px; font-size: 13.5px; color: var(--muted); min-width: 130px; flex: 1; margin: 6px 0; }
+.calc-field input, .calc-field select {
+  padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 15px; font-family: inherit; background: #fff; color: var(--ink);
+}
+.calc-out { margin-top: 12px; background: var(--note-bg); border-radius: 8px; padding: 10px 14px; font-size: 15px; min-height: 20px; }
+
+/* Quiz */
+.q { border: 1px solid var(--line); border-radius: 10px; background: var(--panel); padding: 12px 16px; margin: 12px 0; }
+.q legend { font-weight: 600; padding: 0 6px; font-size: 15px; }
+.q.ok { border-color: #bfe0cd; background: #fbfefc; border-left: 4px solid var(--ok); }
+.q.bad { border-color: #eccfc9; background: #fffbfa; border-left: 4px solid var(--warn); }
+.q.unanswered { border-left: 4px solid #d9a441; background: #fffdf7; }
+.fb-open { color: #9a6b1e; font-weight: 600; }
+.q-opt { display: block; padding: 6px 4px; cursor: pointer; font-size: 15px; }
+.q-num { padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 15px; width: 180px; font-family: inherit; }
+.q-fb { font-size: 14px; margin-top: 8px; color: var(--muted); }
+.fb-ok { color: var(--ok); font-weight: 600; }
+.fb-bad { color: var(--warn); font-weight: 600; }
+.rc { font-size: 13px; }
+.quiz-result { margin-top: 10px; }
+.summary-box { margin-top: 26px; background: var(--ok-bg); border: 1px solid #bfe0cd; border-radius: var(--radius); padding: 6px 22px 18px; }
+.ex-item { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; margin: 10px 0; }
+.ex-opts { display: flex; flex-wrap: wrap; }
+
+/* Fortschritt */
+.bar { background: #e4eaf1; border-radius: 999px; height: 12px; overflow: hidden; margin: 8px 0 4px; }
+.bar-fill { background: var(--accent); height: 100%; border-radius: 999px; transition: width 0.4s; }
+.crit { list-style: none; padding: 0; }
+.crit li { padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+.crit li:last-child { border-bottom: none; }
+.crit-done { color: var(--ok); }
+
+/* Glossar */
+.search { width: 100%; padding: 11px 14px; border: 1px solid var(--line); border-radius: 10px; font-size: 15.5px; margin: 10px 0 16px; font-family: inherit; }
+.glossary-term { margin: 6px 0; }
+
+/* Prüfungs-Zähler, Export-Fallback */
+.exam-progress { margin: 12px 0 4px; font-size: 14px; }
+.copybox { width: 100%; font: 12px/1.4 ui-monospace, Menlo, monospace; border: 1px solid var(--line); border-radius: 8px; padding: 10px; margin: 8px 0; box-sizing: border-box; }
+
+/* Tastatur-Fokus deutlich sichtbar */
+.nav-item:focus-visible, .btn:focus-visible, summary:focus-visible, a:focus-visible,
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid #7fb2df; outline-offset: 2px;
+}
+
+/* Onboarding */
+.onboard { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: linear-gradient(160deg, #14293d 0%, #1e4260 100%); width: 100%; }
+.onboard-card { background: var(--panel); border-radius: 16px; padding: 30px 34px; max-width: 620px; width: 100%; box-shadow: 0 18px 60px rgba(0,0,0,0.35); }
+.onboard-card h1 { margin-top: 0; }
+.contract-item { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; font-size: 14.5px; cursor: pointer; }
+.contract-item input { margin-top: 4px; flex-shrink: 0; }
+
+/* Responsiv */
+@media (max-width: 760px) {
+  #app { flex-direction: column; }
+  .nav { width: 100%; height: auto; position: static; flex-direction: row; flex-wrap: wrap; align-items: center; padding: 10px; }
+  .nav-brand { padding: 4px 10px; font-size: 16px; }
+  .nav-item { padding: 7px 9px; font-size: 13.5px; }
+  .nav-ic { margin-right: 4px; }
+  .nav-foot { display: none; }
+  .main { padding: 18px 16px 60px; }
+  .terms { grid-template-columns: 1fr; }
+  /* Touch-Ziele mindestens ~44px */
+  .q-opt { padding: 11px 6px; min-height: 44px; display: flex; align-items: center; gap: 8px; }
+  .btn.chip { min-height: 44px; padding: 10px 16px; }
+  .btn { min-height: 42px; }
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* ============================================================
+   ENGINE — Finanzmathematik, Quiz-Auswertung, Freischaltung,
+   Wiederholungsplanung. Reine Funktionen, ohne DOM-Zugriff.
+   ============================================================ */
+const ENGINE = (() => {
+
+  // ---------- Zahlen & Formatierung ----------
+  // Akzeptiert deutsche Eingaben: "1.234,56" oder "1234.56" oder "12,5"
+  function parseNum(input) {
+    if (typeof input === 'number') return isFinite(input) ? input : NaN;
+    if (input == null) return NaN;
+    let s = String(input).trim().replace(/\s/g, '').replace(/AED/gi, '');
+    if (s === '') return NaN;
+    const hasComma = s.includes(','), hasDot = s.includes('.');
+    // Deutsche Tausenderpunkte ohne Komma: "1.000" → 1000
+    if (!hasComma && /^\d{1,3}(\.\d{3})+$/.test(s)) return parseFloat(s.replace(/\./g, ''));
+    if (hasComma && hasDot) {
+      // Das zuletzt auftretende Zeichen ist der Dezimaltrenner
+      if (s.lastIndexOf(',') > s.lastIndexOf('.')) s = s.replace(/\./g, '').replace(',', '.');
+      else s = s.replace(/,/g, '');
+    } else if (hasComma) {
+      s = s.replace(',', '.');
+    }
+    const v = parseFloat(s);
+    return isFinite(v) ? v : NaN;
+  }
+
+  function fmt(n, dec = 2) {
+    if (!isFinite(n)) return '–';
+    return n.toLocaleString('de-DE', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  }
+  function fmtAED(n, dec = 2) { return fmt(n, dec) + ' AED'; }
+  function fmtPct(n, dec = 2) { return fmt(n, dec) + ' %'; }
+
+  // ---------- Risiko-Mathematik ----------
+  // Risikobetrag = Kapital × Risiko%   (der maximal geplante Verlust)
+  function riskAmount(capitalAED, riskPct) {
+    if (!(capitalAED > 0) || !(riskPct > 0)) return NaN;
+    return capitalAED * (riskPct / 100);
+  }
+
+  // Positionsgröße: Stückzahl = Risikobetrag ÷ Stop-Distanz (abgerundet, ganze Stücke)
+  function positionSize(capitalAED, riskPct, entry, stop) {
+    const rAED = riskAmount(capitalAED, riskPct);
+    if (!isFinite(rAED)) return null;
+    if (!(entry > 0) || !(stop > 0)) return null;
+    if (stop >= entry) return { error: 'stop_not_below_entry' }; // V1: nur Long ohne Hebel
+    const dist = entry - stop;
+    // 1e-9-Puffer gegen Fließkomma-Rauschen (z. B. 5/0,1 = 49,999…)
+    const shares = Math.floor(rAED / dist + 1e-9);
+    const positionValue = shares * entry;
+    return {
+      riskAmount: rAED,
+      stopDistance: dist,
+      stopDistancePct: (dist / entry) * 100,
+      shares,
+      positionValue,
+      actualRiskAED: shares * dist,
+      exceedsCapital: positionValue > capitalAED
+    };
+  }
+
+  // Nötige Erholung nach Verlust: Verlust x% → Gewinn x/(1-x) nötig
+  function recoveryNeededPct(lossPct) {
+    if (!(lossPct > 0) || lossPct >= 100) return NaN;
+    return (lossPct / (100 - lossPct)) * 100;
+  }
+
+  // Chance-Risiko-Verhältnis (Long): (Ziel-Einstieg)/(Einstieg-Stop)
+  function crv(entry, stop, target) {
+    if (!(entry > 0) || !(stop > 0) || !(target > 0)) return NaN;
+    if (stop >= entry || target <= entry) return NaN;
+    return (target - entry) / (entry - stop);
+  }
+
+  // R-Multiple eines Ergebnisses: (Ausstieg-Einstieg)/(Einstieg-Stop)
+  function rMultiple(entry, stop, exit) {
+    if (!(entry > 0) || !(stop > 0) || !isFinite(exit)) return NaN;
+    if (stop >= entry) return NaN;
+    return (exit - entry) / (entry - stop);
+  }
+
+  // Gebühreneffekt: Kauf + Verkauf (fixe Gebühr je Order)
+  function feeRoundTrip(positionValueAED, feePerOrderAED) {
+    if (!(positionValueAED > 0) || !(feePerOrderAED >= 0)) return NaN;
+    const total = feePerOrderAED * 2;
+    return { totalFees: total, pctOfPosition: (total / positionValueAED) * 100 };
+  }
+
+  // Erwartungswert je Trade: p·G − (1−p)·V  (G/V als positive Beträge)
+  function expectancy(winRatePct, avgWin, avgLoss) {
+    const p = winRatePct / 100;
+    if (!(p >= 0 && p <= 1) || !isFinite(avgWin) || !isFinite(avgLoss)) return NaN;
+    return p * avgWin - (1 - p) * avgLoss;
+  }
+
+  // Kontostand nach Serie gleicher %-Verluste
+  function balanceAfterLosses(capitalAED, lossPctPerTrade, nTrades) {
+    if (!(capitalAED > 0) || !(lossPctPerTrade >= 0) || !(nTrades >= 0)) return NaN;
+    return capitalAED * Math.pow(1 - lossPctPerTrade / 100, nTrades);
+  }
+
+  // ---------- Quiz-Auswertung ----------
+  // question: {id, type:'mc'|'num', correct, tol?, points?, riskCritical?}
+  // answers:  {questionId: gegebene Antwort}
+  function gradeQuestion(q, given) {
+    if (given == null || given === '') return false;
+    if (q.type === 'mc') return Number(given) === Number(q.correct);
+    if (q.type === 'num') {
+      const v = parseNum(given);
+      if (!isFinite(v)) return false;
+      const tol = q.tol != null ? q.tol : Math.max(Math.abs(q.correct) * 0.005, 0.01);
+      return Math.abs(v - q.correct) <= tol;
+    }
+    return false;
+  }
+
+  function gradeQuiz(questions, answers) {
+    let earned = 0, total = 0;
+    const wrong = [], riskCriticalFailed = [];
+    for (const q of questions) {
+      const pts = q.points || 1;
+      total += pts;
+      if (gradeQuestion(q, answers[q.id])) earned += pts;
+      else {
+        wrong.push(q.id);
+        if (q.riskCritical) riskCriticalFailed.push(q.id);
+      }
+    }
+    const scorePct = total > 0 ? (earned / total) * 100 : 0;
+    return {
+      scorePct,
+      earned, total, wrong, riskCriticalFailed,
+      passed: scorePct >= 80 && riskCriticalFailed.length === 0
+    };
+  }
+
+  // ---------- Freischaltung ----------
+  // Eine Phase wird freigeschaltet, wenn die Vorphase 'done' ist.
+  // Eine Lektion gilt als bestanden mit gradeQuiz(...).passed === true.
+  function phaseStatus(phaseId, progress) {
+    if (phaseId === 0) return progress.phases['0']?.status || 'current';
+    const prev = progress.phases[String(phaseId - 1)];
+    if (prev && prev.status === 'done') {
+      return progress.phases[String(phaseId)]?.status || 'current';
+    }
+    return progress.phases[String(phaseId)]?.status === 'done' ? 'done' : 'locked';
+  }
+
+  // ---------- Wiederholung (einfaches Spaced Repetition) ----------
+  const REVIEW_INTERVALS = [1, 3, 7, 21]; // Tage
+  function nextReview(prevIntervalIdx, correct, todayISO) {
+    const idx = correct ? Math.min((prevIntervalIdx ?? -1) + 1, REVIEW_INTERVALS.length - 1) : 0;
+    const d = new Date(todayISO + 'T00:00:00');
+    d.setDate(d.getDate() + REVIEW_INTERVALS[idx]);
+    // Lokal formatieren (nicht UTC), sonst verrutschen Fälligkeiten je Zeitzone
+    const iso = new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    return { intervalIdx: idx, dueDate: iso };
+  }
+  function dueReviews(reviews, todayISO) {
+    return (reviews || []).filter(r => r.dueDate <= todayISO);
+  }
+
+  // ---------- Streak / Lerntage ----------
+  function daysBetween(isoA, isoB) {
+    return Math.round((new Date(isoB + 'T00:00:00') - new Date(isoA + 'T00:00:00')) / 86400000);
+  }
+  function computeStreak(learningDays, todayISO) {
+    if (!learningDays || learningDays.length === 0) return 0;
+    const days = [...new Set(learningDays)].sort();
+    const last = days[days.length - 1];
+    const gap = daysBetween(last, todayISO);
+    if (gap > 1 || gap < 0) return 0; // weder heute noch gestern (oder Uhr verstellt)
+    let streak = 1;
+    for (let i = days.length - 1; i > 0; i--) {
+      if (daysBetween(days[i - 1], days[i]) === 1) streak++;
+      else break;
+    }
+    return streak;
+  }
+
+  return {
+    parseNum, fmt, fmtAED, fmtPct,
+    riskAmount, positionSize, recoveryNeededPct, crv, rMultiple,
+    feeRoundTrip, expectancy, balanceAfterLosses,
+    gradeQuestion, gradeQuiz, phaseStatus,
+    REVIEW_INTERVALS, nextReview, dueReviews,
+    daysBetween, computeStreak
+  };
+})();
+if (typeof module !== 'undefined' && module.exports) module.exports = ENGINE;
+
+/* ============================================================
+   DATA — Curriculum, Lektionen, Prüfungen, Glossar.
+   Reine Daten, keine Logik. Sprache: einfaches Deutsch.
+   ============================================================ */
+const DATA = {
+
+  meta: { appVersion: '1.0.0', build: '2026-07-16' },
+
+  // ---------- 20 Phasen (identisch mit 04_Tracker/progress.json) ----------
+  phases: [
+    { id: 0,  title: 'Orientierung',                        lessonsTotal: 10 },
+    { id: 1,  title: 'Börsengrundlagen',                    lessonsTotal: 19 },
+    { id: 2,  title: 'Orders und Ausführung',               lessonsTotal: 13 },
+    { id: 3,  title: 'Risiko und Mathematik',               lessonsTotal: 18 },
+    { id: 4,  title: 'Chart-Grundlagen',                    lessonsTotal: 11 },
+    { id: 5,  title: 'Trend und Marktstruktur',             lessonsTotal: 14 },
+    { id: 6,  title: 'Unterstützungen, Widerstände, Zonen', lessonsTotal: 11 },
+    { id: 7,  title: 'Volumen und Volatilität',             lessonsTotal: 9  },
+    { id: 8,  title: 'Indikatoren',                         lessonsTotal: 14 },
+    { id: 9,  title: 'Umstrittene Trading-Konzepte',        lessonsTotal: 10 },
+    { id: 10, title: 'Fundamentalanalyse',                  lessonsTotal: 24 },
+    { id: 11, title: 'Unternehmensrecherche',               lessonsTotal: 19 },
+    { id: 12, title: 'Makroökonomie',                       lessonsTotal: 16 },
+    { id: 13, title: 'Nachrichten und Ereignisse',          lessonsTotal: 15 },
+    { id: 14, title: 'Strategien',                          lessonsTotal: 13 },
+    { id: 15, title: 'Trade Management',                    lessonsTotal: 16 },
+    { id: 16, title: 'Psychologie und Verhalten',           lessonsTotal: 20 },
+    { id: 17, title: 'Backtesting',                         lessonsTotal: 19 },
+    { id: 18, title: 'Paper Trading',                       lessonsTotal: 10 },
+    { id: 19, title: 'Echtgeld-Bereitschaft',               lessonsTotal: 10 }
+  ],
+
+  // Geplante Lektionstitel der Phase 0 (Inhalt folgt schrittweise)
+  phase0Lessons: [
+    { id: '0.1',  title: 'Was ist Trading?' },
+    { id: '0.2',  title: 'Was ist Investieren?' },
+    { id: '0.3',  title: 'Trading oder Glücksspiel?' },
+    { id: '0.4',  title: 'Chancen und Grenzen' },
+    { id: '0.5',  title: 'Kapital, Rendite und Risiko' },
+    { id: '0.6',  title: 'Realistischer Zeitaufwand' },
+    { id: '0.7',  title: 'Welcher Handelsstil passt zu mir?' },
+    { id: '0.8',  title: 'Persönliche Ziele' },
+    { id: '0.9',  title: 'Mein Risikoprofil' },
+    { id: '0.10', title: 'Lernvertrag und feste Regeln' }
+  ],
+
+  // ---------- Pflichtmodul: Risiko, Verlust und Positionsgröße ----------
+  moduleR: {
+    id: 'R',
+    title: 'Risiko, Verlust und Positionsgröße',
+    subtitle: 'Das Fundament. Ohne dieses Modul kein Paper Trading.',
+    lessons: ['R1', 'R2', 'R3', 'R4', 'R5'],
+    examId: 'R-EXAM'
+  },
+
+  lessons: {
+
+    /* ==================== LEKTION 0.1 ==================== */
+    '0.1': {
+      id: '0.1', phase: 0, title: 'Was ist Trading?', duration: '10–15 Min.',
+      goal: 'Du kannst erklären, was Trading ist und wodurch es sich vom Investieren und vom Glücksspiel unterscheidet.',
+      terms: [
+        { term: 'Trading', def: 'Das aktive Kaufen und Verkaufen von Wertpapieren mit dem Ziel, von Kursbewegungen zu profitieren — meist über Tage bis Monate, manchmal Stunden.' },
+        { term: 'Investieren', def: 'Das langfristige Halten von Anteilen an Unternehmen, um über Jahre am Wachstum und an Gewinnen teilzuhaben.' },
+        { term: 'Position', def: 'Dein aktueller Bestand in einem Wertpapier. „Eine Position eröffnen" heißt kaufen, „schließen" heißt verkaufen.' },
+        { term: 'Broker', def: 'Das Unternehmen, über das du an der Börse kaufst und verkaufst. Es leitet deine Aufträge weiter und verlangt dafür Gebühren.' },
+        { term: 'Setup', def: 'Eine vorher definierte Situation im Markt, bei der du nach festen Regeln handelst — statt aus dem Bauch heraus.' }
+      ],
+      content: [
+        { p: 'Trading bedeutet: Du kaufst ein Wertpapier — zum Beispiel eine Aktie — und verkaufst es später wieder, weil du erwartest, dass der Kurs sich in deine Richtung bewegt. Dein Gewinn oder Verlust ist die Differenz zwischen Kauf- und Verkaufspreis, minus Gebühren.' },
+        { p: 'Der wichtigste Unterschied zum Investieren ist der Zeithorizont und die Begründung: Ein Investor kauft ein Unternehmen, weil er es über Jahre für gut hält. Ein Trader kauft eine Kursbewegung, weil er dafür in den nächsten Tagen oder Wochen konkrete Belege sieht — und er legt vorher fest, wann seine Idee falsch ist.' },
+        { h: 'Trading ist kein Glücksspiel — aber nur unter Bedingungen' },
+        { p: 'Beim Glücksspiel ist der Ausgang zufällig und die Bedingungen sind gegen dich gestellt. Trading wird nur dann etwas anderes als Glücksspiel, wenn du drei Dinge hast: einen nachvollziehbaren Grund für jeden Trade (Setup), eine feste Verlustbegrenzung und eine ehrliche Auswertung deiner Ergebnisse. Fehlt eines davon, ist es Glücksspiel mit Extraschritten.' },
+        { warn: 'Ehrlichkeit vorab: Die meisten Anfänger verlieren Geld — vor allem durch zu große Positionen, fehlende Verlustbegrenzung und zu häufiges Handeln. Genau deshalb lernst du zuerst Risiko, und echtes Geld kommt erst ganz am Ende.' },
+        { h: 'Zwei Beispiele' },
+        { p: 'Beispiel 1 — Trading: Sara beobachtet eine Aktie, die seit Wochen zwischen 90 und 100 AED pendelt. Sie kauft bei 91 AED mit dem Plan: „Wenn der Kurs unter 88 fällt, war meine Idee falsch, dann verkaufe ich mit kleinem Verlust. Steigt er Richtung 99, verkaufe ich mit Gewinn." Sie weiß vor dem Kauf, was sie maximal verliert.' },
+        { p: 'Beispiel 2 — Investieren: Omar kauft Anteile eines großen Technologieunternehmens, weil er glaubt, dass es in zehn Jahren deutlich mehr verdienen wird als heute. Kurzfristige Kursschwankungen von 10 oder 20 Prozent sitzt er bewusst aus. Er prüft einmal im Quartal, ob seine Gründe noch gelten.' },
+        { svg: 'timeline' },
+        { h: 'Was Trading NICHT ist' },
+        { list: [
+          'kein schneller Weg zu regelmäßigem Einkommen — schon gar nicht mit kleinem Konto',
+          'keine Garantie: auch ein guter Trade kann verlieren, auch ein schlechter kann zufällig gewinnen',
+          'kein Wettbewerb, wer am meisten handelt: Nicht zu handeln ist eine vollwertige Entscheidung'
+        ]}
+      ],
+      deep: [
+        { label: 'Typischer Anfängerfehler', text: 'Anfänger fragen: „Welche Aktie soll ich kaufen?" Die bessere Frage ist: „Was ist mein Plan, wenn ich falsch liege?" Der Unterschied zwischen einem Trader und einem Zocker zeigt sich nicht beim Einstieg, sondern beim Ausstieg.' },
+        { label: 'Mehr Details', text: 'Zwischen Trading und Investieren gibt es Zwischenformen: Position Trading (Wochen bis Monate), Swing Trading (Tage bis Wochen), Daytrading (innerhalb eines Tages). Je kürzer der Zeithorizont, desto höher sind Anforderungen, Kosten und Stress. Welcher Stil zu dir passt, klären wir in Lektion 0.7 — nicht vorher.' }
+      ],
+      exercise: {
+        intro: 'Ordne zu: Ist das eher Trading, Investieren oder Glücksspiel?',
+        items: [
+          { text: 'Ali kauft eine Aktie, weil ein Influencer „100 % sicher Verdopplung" verspricht. Kein Plan für den Ausstieg.', options: ['Trading', 'Investieren', 'Glücksspiel'], correct: 2, explain: 'Kein eigener Grund, kein Ausstiegsplan, ein unseriöses Versprechen — das ist Glücksspiel, egal wie es genannt wird.' },
+          { text: 'Lina kauft bei 50 AED, verkauft automatisch bei 47 AED (Verlustbegrenzung) oder bei 58 AED (Ziel). Grund: Ausbruch über einen Widerstand mit hohem Volumen.', options: ['Trading', 'Investieren', 'Glücksspiel'], correct: 0, explain: 'Setup, Verlustbegrenzung, Ziel — das ist ein geplanter Trade.' },
+          { text: 'Karim kauft jeden Monat Anteile eines breiten Aktien-ETFs und will sie 20 Jahre halten.', options: ['Trading', 'Investieren', 'Glücksspiel'], correct: 1, explain: 'Langer Horizont, regelmäßiges Kaufen, kein Timing — klassisches Investieren.' }
+        ]
+      },
+      quiz: [
+        { id: 'q01-1', type: 'mc', q: 'Was unterscheidet einen Trader von einem Investor am deutlichsten?', options: ['Der Trader benutzt einen Computer', 'Zeithorizont und Begründung: Der Trader handelt Kursbewegungen mit vorher festgelegtem Ausstieg', 'Der Investor verliert nie Geld', 'Der Trader zahlt keine Gebühren'], correct: 1, explain: 'Trader handeln Bewegungen über kürzere Zeiträume und definieren vorher, wann ihre Idee falsch ist. Investoren halten Unternehmen über Jahre.' },
+        { id: 'q01-2', type: 'mc', q: 'Wann ist Trading faktisch Glücksspiel?', options: ['Wenn man weniger als 10.000 AED hat', 'Wenn man ohne Setup, ohne Verlustbegrenzung und ohne Auswertung handelt', 'Wenn man nur einmal pro Woche handelt', 'Wenn man Aktien statt Krypto handelt'], correct: 1, riskCritical: true, explain: 'Ohne Grund, ohne Verlustbegrenzung und ohne ehrliche Auswertung ist der Ausgang Zufall — das ist die Definition von Glücksspiel.' },
+        { id: 'q01-3', type: 'mc', q: 'Ein guter Trade …', options: ['gewinnt immer', 'kann trotzdem verlieren — entscheidend ist der Prozess', 'braucht keinen Stop-Loss', 'ist einer mit möglichst großer Position'], correct: 1, explain: 'Einzelne Ergebnisse enthalten Zufall. Bewertet wird, ob du deinen Regeln gefolgt bist — über viele Trades zeigt sich dann die Qualität.' },
+        { id: 'q01-4', type: 'mc', q: 'Was bedeutet „eine Position eröffnen"?', options: ['Ein Depot beim Broker beantragen', 'Ein Wertpapier kaufen (Bestand aufbauen)', 'Eine Order löschen', 'Einen Chart öffnen'], correct: 1, explain: 'Position = dein Bestand. Eröffnen = kaufen, schließen = verkaufen.' },
+        { id: 'q01-5', type: 'mc', q: 'Welche Aussage über Anfänger und Trading ist ehrlich?', options: ['Mit der richtigen App gewinnt fast jeder', 'Die meisten Anfänger verlieren Geld, vor allem durch zu großes Risiko und Übertrading', 'Verluste passieren nur Anfängern ohne Talent', 'Wer diszipliniert ist, hat kein Verlustrisiko mehr'], correct: 1, riskCritical: true, explain: 'Verluste gehören zum Trading. Disziplin und Risikokontrolle verbessern deine Chancen, beseitigen das Risiko aber nie.' }
+      ],
+      summary: [
+        'Trading heißt: Kursbewegungen kaufen und verkaufen, mit vorher festgelegtem Ausstieg.',
+        'Investieren heißt: Unternehmen über Jahre halten und Schwankungen aushalten.',
+        'Ohne Setup, Verlustbegrenzung und ehrliche Auswertung ist Trading Glücksspiel.',
+        'Auch gute Trades können verlieren — bewertet wird der Prozess, nicht der Einzelfall.',
+        'Nicht zu handeln ist eine vollwertige Entscheidung.'
+      ]
+    },
+
+    /* ==================== MODUL R — LEKTION 1 ==================== */
+    'R1': {
+      id: 'R1', phase: 'R', title: 'Was bedeutet Risiko?', duration: '10–15 Min.',
+      goal: 'Du kannst den Unterschied zwischen Positionswert und Risikobetrag erklären und deinen Risikobetrag berechnen.',
+      terms: [
+        { term: 'Risikobetrag', def: 'Der Geldbetrag, den du bei einem Trade maximal planst zu verlieren, wenn dein Stop-Loss ausgelöst wird.' },
+        { term: 'Positionswert', def: 'Der Gesamtwert deiner Position: Stückzahl × Kaufkurs. Das ist NICHT dein Risiko.' },
+        { term: 'Stop-Loss', def: 'Ein vorher festgelegter Kurs, bei dem du verkaufst, um den Verlust zu begrenzen.' },
+        { term: 'Risiko pro Trade', def: 'Dein Risikobetrag als Prozentsatz deines Kapitals. In deiner Ausbildung: 0,25 % bis maximal 0,5 %.' }
+      ],
+      content: [
+        { p: 'Die wichtigste Verwechslung im ganzen Trading: Positionswert und Risiko sind nicht dasselbe. Wenn du für 400 AED Aktien kaufst, riskierst du nicht automatisch 400 AED — sondern nur den Betrag bis zu deinem Stop-Loss.' },
+        { h: 'Beispiel 1: Der Unterschied' },
+        { p: 'Kapital: 1.000 AED. Du kaufst 10 Aktien zu je 40 AED → Positionswert 400 AED. Dein Stop-Loss liegt bei 39,50 AED, also 0,50 AED unter dem Einstieg. Wird er ausgelöst, verlierst du 10 × 0,50 = 5 AED (plus Gebühren). Dein geplantes Risiko ist 5 AED = 0,5 % deines Kapitals — obwohl 400 AED „im Markt" sind.' },
+        { svg: 'risk-vs-position' },
+        { h: 'Beispiel 2: Gleiches Risiko, andere Position' },
+        { p: 'Wieder 1.000 AED Kapital und 5 AED Risikobetrag. Diesmal ist der Stop weiter weg: Einstieg 40 AED, Stop 39 AED → 1 AED Distanz. Jetzt darfst du nur 5 Aktien kaufen (5 AED ÷ 1 AED). Positionswert: 200 AED. Merke: Je weiter der Stop, desto kleiner die Position — bei gleichem Risiko.' },
+        { note: 'Deine Regel in der Ausbildung: Risiko pro Trade = 0,25 % bis 0,5 % des Kapitals. Bei 1.000 AED sind das 2,50 bis 5 AED. Das klingt wenig — genau so lernen Profis. Erst nach nachgewiesener Kompetenz sind maximal 1 % erlaubt.' },
+        { calc: 'riskamount' },
+        { warn: 'Wichtig: Der Stop-Loss ist eine Planungsgrenze, keine Garantie. Bei Kurslücken (Gaps) oder dünnem Handel kann der tatsächliche Verkaufskurs schlechter sein als dein Stop. Deshalb bleibt das Risiko klein — damit auch ein schlechter Ausstieg dich nicht ernsthaft verletzt.' }
+      ],
+      deep: [
+        { label: 'Typischer Anfängerfehler', text: '„Ich habe nur 400 AED investiert, mehr kann ich nicht verlieren" — stimmt formal, aber wer so denkt, plant den Totalverlust der Position als akzeptabel ein. Geplant wird andersherum: Erst der maximale Verlust (z. B. 5 AED), daraus ergibt sich die Position.' },
+        { label: 'Mehr Details', text: 'Profis nennen den Risikobetrag oft „1R". Alle Ergebnisse werden dann in R gemessen: +2R heißt, du hast das Doppelte deines Risikos gewonnen. Das lernst du in Lektion R4.' }
+      ],
+      exercise: {
+        intro: 'Rechne selbst (Taschenrechner erlaubt, Eingabe mit Komma oder Punkt):',
+        calc: [
+          { id: 'exR1-1', type: 'num', q: 'Kapital 1.000 AED, Risiko 0,5 %. Wie hoch ist dein Risikobetrag in AED?', correct: 5, tol: 0.01, explain: '1.000 × 0,005 = 5 AED.' },
+          { id: 'exR1-2', type: 'num', q: 'Kapital 1.000 AED, Risiko 0,25 %. Wie hoch ist dein Risikobetrag in AED?', correct: 2.5, tol: 0.01, explain: '1.000 × 0,0025 = 2,50 AED.' },
+          { id: 'exR1-3', type: 'num', q: 'Du kaufst 8 Aktien zu 25 AED, Stop bei 24 AED. Wie viel AED verlierst du, wenn der Stop exakt ausgelöst wird (ohne Gebühren)?', correct: 8, tol: 0.01, explain: '8 Stück × 1 AED Stop-Distanz = 8 AED.' }
+        ]
+      },
+      quiz: [
+        { id: 'qR1-1', type: 'mc', q: 'Positionswert 400 AED, Stop-Distanz 0,50 AED bei 10 Aktien. Was ist dein geplantes Risiko?', options: ['400 AED', '40 AED', '5 AED', '0,50 AED'], correct: 2, riskCritical: true, explain: 'Risiko = Stückzahl × Stop-Distanz = 10 × 0,50 = 5 AED. Der Positionswert ist nicht das geplante Risiko.' },
+        { id: 'qR1-2', type: 'num', q: 'Kapital 1.000 AED, Risikoregel 0,5 %. Maximaler Risikobetrag in AED?', correct: 5, tol: 0.01, riskCritical: true, explain: '1.000 × 0,5 % = 5 AED.' },
+        { id: 'qR1-3', type: 'mc', q: 'Je weiter der Stop-Loss vom Einstieg entfernt ist (bei gleichem Risikobetrag) …', options: ['desto größer darf die Position sein', 'desto kleiner muss die Position sein', 'desto höher ist der Gewinn', 'spielt keine Rolle'], correct: 1, explain: 'Risikobetrag = Stückzahl × Stop-Distanz. Größere Distanz bei gleichem Risiko → weniger Stück.' },
+        { id: 'qR1-4', type: 'mc', q: 'Was stimmt über den Stop-Loss?', options: ['Er garantiert den Ausstieg zum exakten Kurs', 'Er ist eine Planungsgrenze; bei Gaps kann der Ausstieg schlechter sein', 'Er ist bei kleinen Konten unnötig', 'Er macht Trades risikofrei'], correct: 1, riskCritical: true, explain: 'Slippage und Kurslücken können den Ausstieg verschlechtern. Deshalb: kleines Risiko pro Trade.' },
+        { id: 'qR1-5', type: 'num', q: 'Du kaufst 20 Aktien zu 15 AED, Stop bei 14,80 AED. Geplantes Risiko in AED (ohne Gebühren)?', correct: 4, tol: 0.01, explain: '20 Stück × 0,20 AED Stop-Distanz = 4 AED.' }
+      ],
+      summary: [
+        'Positionswert (Stückzahl × Kurs) und Risikobetrag sind zwei verschiedene Dinge.',
+        'Dein Risikobetrag ist der geplante maximale Verlust bis zum Stop-Loss.',
+        'In der Ausbildung gilt: 0,25–0,5 % Risiko pro Trade — bei 1.000 AED also 2,50–5 AED.',
+        'Je weiter der Stop, desto kleiner die erlaubte Position.',
+        'Ein Stop-Loss begrenzt Verluste, garantiert aber keinen exakten Ausstiegskurs.'
+      ]
+    },
+
+    /* ==================== MODUL R — LEKTION 2 ==================== */
+    'R2': {
+      id: 'R2', phase: 'R', title: 'Warum sind 5 % Risiko pro Trade hoch?', duration: '10–15 Min.',
+      goal: 'Du kannst mit der Erholungsmathematik begründen, warum kleine Risikoprozente überlebenswichtig sind.',
+      terms: [
+        { term: 'Drawdown', def: 'Der Rückgang deines Kontos vom Höchststand, gemessen in Prozent.' },
+        { term: 'Verlustserie', def: 'Mehrere Verluste hintereinander. Auch mit guter Strategie normal und unvermeidbar.' },
+        { term: 'Erholungsgewinn', def: 'Der Prozentgewinn, den du brauchst, um einen Verlust wieder aufzuholen. Er ist immer größer als der Verlust selbst.' },
+        { term: 'Risk of Ruin', def: 'Die Gefahr, so viel zu verlieren, dass sinnvolles Weitermachen unmöglich wird.' }
+      ],
+      content: [
+        { p: 'Verluste und Gewinne sind nicht symmetrisch. Wer 10 % verliert, braucht 11,1 % Gewinn, um zurück auf null zu kommen. Wer 50 % verliert, braucht 100 %. Diese Schieflage ist der Kern des Risikomanagements.' },
+        { table: { caption: 'Verlust vs. nötiger Erholungsgewinn', head: ['Verlust', 'nötiger Gewinn zur Erholung'], rows: [['−5 %', '+5,3 %'], ['−10 %', '+11,1 %'], ['−20 %', '+25 %'], ['−30 %', '+42,9 %'], ['−50 %', '+100 %'], ['−70 %', '+233 %']] } },
+        { h: 'Beispiel 1: Verlustserie mit 5 % Risiko' },
+        { p: 'Angenommen, du riskierst 5 % pro Trade und erwischst 8 Verluste in Folge — das passiert auch guten Tradern. Dein Konto fällt von 1.000 AED auf rund 663 AED (−34 %). Um das aufzuholen, brauchst du +51 %. Mit 0,5 % Risiko wärst du nach denselben 8 Verlusten bei etwa 961 AED (−4 %) — ärgerlich, aber harmlos.' },
+        { calc: 'lossseries' },
+        { h: 'Beispiel 2: Warum Verlustserien normal sind' },
+        { p: 'Selbst mit 50 % Trefferquote ist die Wahrscheinlichkeit, in 50 Trades irgendwo 6 Verluste in Folge zu erleben, hoch — das ist keine Ausnahme, sondern der Normalfall. Dein Risikosystem muss so gebaut sein, dass der Normalfall dich nicht zerstört.' },
+        { warn: 'Deshalb ist „5 % pro Trade" keine mutige Einstellung, sondern ein Konstruktionsfehler: Eine normale Verlustserie erzeugt damit einen Drawdown, aus dem sich kleine Konten wegen Gebühren und Erholungsmathematik kaum zurückkämpfen.' },
+        { calc: 'recovery' }
+      ],
+      deep: [
+        { label: 'Typischer Anfängerfehler', text: 'Nach Verlusten das Risiko ERHÖHEN, um „es zurückzuholen" (Revenge Trading). Die Mathematik läuft genau andersherum: Nach Verlusten ist dein Konto kleiner, also ist derselbe Prozentsatz weniger AED — dein Risiko sinkt automatisch mit, wenn du dich an Prozentregeln hältst.' },
+        { label: 'Professioneller Hintergrund', text: 'Profis begrenzen zusätzlich Tages-, Wochen- und Monatsverluste (bei dir: 1,5 % / 3 % / 6 %). Wird eine Grenze erreicht, wird pausiert — nicht nachgelegt. Das schützt vor den Tagen, an denen alles schiefgeht.' }
+      ],
+      exercise: {
+        intro: 'Rechne selbst:',
+        calc: [
+          { id: 'exR2-1', type: 'num', q: 'Dein Konto fällt um 20 %. Wie viel Prozent Gewinn brauchst du zur vollständigen Erholung? (Antwort in %, eine Nachkommastelle reicht)', correct: 25, tol: 0.5, explain: '20 ÷ (100 − 20) = 25 %.' },
+          { id: 'exR2-2', type: 'num', q: '1.000 AED, drei Verluste in Folge mit je 5 % Kontorisiko. Kontostand danach in AED? (auf ganze AED runden)', correct: 857, tol: 1.5, explain: '1.000 × 0,95³ ≈ 857 AED.' },
+          { id: 'exR2-3', type: 'num', q: '1.000 AED, drei Verluste in Folge mit je 0,5 % Kontorisiko. Kontostand danach in AED? (auf ganze AED runden)', correct: 985, tol: 1.5, explain: '1.000 × 0,995³ ≈ 985 AED. Vergleiche: 857 vs. 985.' }
+        ]
+      },
+      quiz: [
+        { id: 'qR2-1', type: 'mc', q: 'Warum ist ein 50-%-Verlust so gefährlich?', options: ['Weil die Bank das Konto sperrt', 'Weil man +100 % braucht, um ihn aufzuholen', 'Weil man dann keine Aktien mehr kaufen darf', 'Er ist nicht gefährlich, wenn die nächste Idee gut ist'], correct: 1, riskCritical: true, explain: 'Verlorene Prozente wiegen schwerer als gewonnene: 50 % Verlust erfordert 100 % Gewinn.' },
+        { id: 'qR2-2', type: 'num', q: 'Wie viel Prozent Gewinn brauchst du nach einem Verlust von 10 %? (in %, eine Nachkommastelle)', correct: 11.1, tol: 0.2, explain: '10 ÷ 90 = 11,1 %.' },
+        { id: 'qR2-3', type: 'mc', q: 'Verlustserien von 6+ Trades in Folge sind …', options: ['ein sicheres Zeichen für eine kaputte Strategie', 'auch bei guten Strategien statistisch normal', 'nur bei Anfängern möglich', 'mit gutem Gefühl vermeidbar'], correct: 1, explain: 'Serien sind eine Frage der Wahrscheinlichkeit, nicht des Talents. Das Risikosystem muss sie überleben.' },
+        { id: 'qR2-4', type: 'mc', q: 'Was ist die richtige Reaktion auf eine Verlustserie?', options: ['Risiko erhöhen, um Verluste zurückzuholen', 'Regeln prüfen, Risiko klein halten, ggf. pausieren (Verlustgrenzen)', 'Sofort die Strategie wechseln', 'Doppelt so oft handeln'], correct: 1, riskCritical: true, explain: 'Revenge Trading vergrößert Schäden. Verlustgrenzen (Tag/Woche/Monat) erzwingen Pausen.' },
+        { id: 'qR2-5', type: 'mc', q: 'Was ist ein Drawdown?', options: ['Die Gebühr beim Verkauf', 'Der Rückgang des Kontos vom Höchststand, in Prozent', 'Ein Ordertyp', 'Der Gewinn eines Monats'], correct: 1, explain: 'Drawdown misst, wie weit dein Konto unter seinem bisherigen Höchststand liegt.' }
+      ],
+      summary: [
+        'Verluste brauchen überproportionale Gewinne zur Erholung: −50 % erfordert +100 %.',
+        'Verlustserien sind statistisch normal — dein Risikosystem muss sie überleben.',
+        'Mit 0,5 % Risiko ist eine 8er-Verlustserie harmlos, mit 5 % ein schwerer Schaden.',
+        'Nach Verlusten wird das Risiko nie erhöht — Prozentregeln senken es automatisch mit.',
+        'Tages-, Wochen- und Monatsverlustgrenzen erzwingen Pausen, bevor es teuer wird.'
+      ]
+    },
+
+    /* ==================== MODUL R — LEKTION 3 ==================== */
+    'R3': {
+      id: 'R3', phase: 'R', title: 'Stop-Loss-Distanz und Positionsgröße', duration: '15–20 Min.',
+      goal: 'Du kannst aus Kapital, Risikoprozent, Einstieg und Stop die korrekte Stückzahl berechnen.',
+      terms: [
+        { term: 'Stop-Distanz', def: 'Der Abstand zwischen Einstiegskurs und Stop-Loss, in AED je Aktie.' },
+        { term: 'Positionsgröße', def: 'Die Stückzahl, die du kaufen darfst: Risikobetrag ÷ Stop-Distanz, abgerundet.' },
+        { term: 'Struktureller Stop', def: 'Ein Stop, der an einer sinnvollen Stelle im Chart liegt (z. B. unter einer Unterstützung) — nicht an einer Wunschzahl.' }
+      ],
+      content: [
+        { h: 'Die wichtigste Formel deiner Ausbildung' },
+        { p: 'Stückzahl = Risikobetrag ÷ Stop-Distanz. Immer abrunden. Erst kommt der Stop (wo ist meine Idee falsch?), dann die Größe. Niemals umgekehrt.' },
+        { svg: 'position-formula' },
+        { h: 'Beispiel 1' },
+        { p: 'Kapital 1.000 AED, Risiko 0,5 % → Risikobetrag 5 AED. Einstieg 20 AED, Stop 19,60 AED → Distanz 0,40 AED. Stückzahl: 5 ÷ 0,40 = 12,5 → abgerundet 12 Stück. Positionswert: 12 × 20 = 240 AED. Tatsächliches Risiko: 12 × 0,40 = 4,80 AED.' },
+        { h: 'Beispiel 2: Enger Stop, größere Position — gleiche Sicherheit' },
+        { p: 'Gleiche Daten, aber Stop bei 19,90 AED → Distanz 0,10 AED. Stückzahl: 5 ÷ 0,10 = 50 Stück. Positionswert: 1.000 AED — das ist dein GESAMTES Kapital. Rechnerisch korrekt, aber praktisch problematisch: keine Reserve für Gebühren, und ein Gap unter den Stop trifft die volle Position. Regel: Der Positionswert sollte dein verfügbares Kapital nicht ausreizen, auch wenn die Formel es erlauben würde.' },
+        { warn: 'Ein Stop gehört an eine Stelle, an der deine Trade-Idee objektiv widerlegt ist — z. B. unter das letzte höhere Tief. Wer den Stop enger setzt, nur um mehr Stücke kaufen zu „dürfen", betrügt die eigene Rechnung: Der Stop wird dann durch normales Marktrauschen ausgelöst.' },
+        { calc: 'position' }
+      ],
+      deep: [
+        { label: 'Typischer Anfängerfehler', text: 'Erst die Stückzahl wählen („ich kaufe für 500 AED"), dann irgendwo einen Stop hinsetzen. Richtig ist die Reihenfolge: 1. Wo ist die Idee falsch? (Stop) 2. Wie viel darf ich verlieren? (Risikobetrag) 3. Daraus: Stückzahl.' },
+        { label: 'Praxisbeispiel', text: 'Bei sehr engen Stops können Gebühren das Bild kippen: 50 Stück kaufen und verkaufen kostet z. B. 2 × 5 AED Gebühr = 10 AED — das Doppelte deines geplanten Risikos! Gebühren rechnest du in Lektion R5.' }
+      ],
+      exercise: {
+        intro: 'Berechne die Positionsgröße (immer abrunden):',
+        calc: [
+          { id: 'exR3-1', type: 'num', q: 'Kapital 1.000 AED, Risiko 0,5 % (= 5 AED). Einstieg 50 AED, Stop 49 AED. Wie viele Stück darfst du kaufen?', correct: 5, tol: 0.01, explain: 'Distanz 1 AED → 5 ÷ 1 = 5 Stück.' },
+          { id: 'exR3-2', type: 'num', q: 'Kapital 1.000 AED, Risiko 0,25 % (= 2,50 AED). Einstieg 10 AED, Stop 9,75 AED. Stückzahl?', correct: 10, tol: 0.01, explain: 'Distanz 0,25 AED → 2,50 ÷ 0,25 = 10 Stück.' },
+          { id: 'exR3-3', type: 'num', q: 'Wie hoch ist in Aufgabe 2 der Positionswert in AED?', correct: 100, tol: 0.5, explain: '10 Stück × 10 AED = 100 AED.' }
+        ]
+      },
+      quiz: [
+        { id: 'qR3-1', type: 'num', q: 'Risikobetrag 5 AED, Einstieg 40 AED, Stop 39,50 AED. Wie viele Stück? (abrunden)', correct: 10, tol: 0.01, riskCritical: true, explain: 'Distanz 0,50 → 5 ÷ 0,50 = 10 Stück.' },
+        { id: 'qR3-2', type: 'mc', q: 'Was kommt zuerst?', options: ['Stückzahl wählen, dann Stop setzen', 'Stop an sinnvoller Stelle setzen, dann Stückzahl daraus berechnen', 'Positionswert = Kapital, Rest ergibt sich', 'Gefühl entscheidet'], correct: 1, riskCritical: true, explain: 'Erst die Ungültigkeitsstelle (Stop), dann Risikobetrag, daraus die Größe.' },
+        { id: 'qR3-3', type: 'mc', q: 'Der Stop sollte gesetzt werden …', options: ['so eng wie möglich, damit die Position groß wird', 'an einer Stelle, an der die Trade-Idee objektiv widerlegt ist', 'genau 1 % unter dem Einstieg, immer', 'gar nicht, das kostet nur Geld'], correct: 1, riskCritical: true, explain: 'Ein Stop an einer Wunschzahl statt an der Marktstruktur wird durch normales Rauschen ausgelöst.' },
+        { id: 'qR3-4', type: 'num', q: 'Risikobetrag 2,50 AED, Einstieg 25 AED, Stop 24,50 AED. Positionswert in AED? (Stückzahl abrunden)', correct: 125, tol: 0.5, explain: 'Distanz 0,50 → 5 Stück → 5 × 25 = 125 AED.' },
+        { id: 'qR3-5', type: 'mc', q: 'Die Formel ergibt 12,7 Stück. Wie viele kaufst du?', options: ['13 — großzügig aufrunden', '12 — immer abrunden', '12,7 — Bruchstücke gehen immer', 'Egal'], correct: 1, explain: 'Aufrunden würde dein geplantes Risiko überschreiten. Immer abrunden.' }
+      ],
+      summary: [
+        'Stückzahl = Risikobetrag ÷ Stop-Distanz, immer abgerundet.',
+        'Die Reihenfolge ist fest: erst Stop (wo ist die Idee falsch?), dann Risikobetrag, dann Größe.',
+        'Enger Stop erlaubt mehr Stücke — aber nur, wenn die Stelle fachlich sinnvoll bleibt.',
+        'Der Positionswert darf dein Kapital nicht ausreizen, auch wenn die Formel es erlaubt.',
+        'Stops an Wunschzahlen statt an der Marktstruktur werden vom Marktrauschen abgeräumt.'
+      ]
+    },
+
+    /* ==================== MODUL R — LEKTION 4 ==================== */
+    'R4': {
+      id: 'R4', phase: 'R', title: 'Chance-Risiko-Verhältnis und R-Multiples', duration: '10–15 Min.',
+      goal: 'Du kannst das CRV eines Trades berechnen und Ergebnisse in R ausdrücken.',
+      terms: [
+        { term: 'CRV (Chance-Risiko-Verhältnis)', def: 'Mögliche Gewinnspanne geteilt durch Risikospanne. CRV 2 heißt: Die Chance ist doppelt so groß wie das Risiko.' },
+        { term: '1R', def: 'Dein Risikobetrag als Einheit. Alle Ergebnisse lassen sich in R messen.' },
+        { term: 'Trefferquote', def: 'Anteil der Gewinntrades an allen Trades, in Prozent.' },
+        { term: 'Erwartungswert', def: 'Durchschnittliches Ergebnis pro Trade über viele Trades: Trefferquote × Ø-Gewinn − Verlustquote × Ø-Verlust.' }
+      ],
+      content: [
+        { p: 'Das CRV beantwortet vor dem Einstieg: Lohnt sich dieser Trade überhaupt? Formel (Long): CRV = (Ziel − Einstieg) ÷ (Einstieg − Stop).' },
+        { h: 'Beispiel 1' },
+        { p: 'Einstieg 30 AED, Stop 29 AED (Risiko 1 AED je Stück), Ziel 33 AED (Chance 3 AED je Stück) → CRV = 3. Gewinnst du, bekommst du +3R; verlierst du, −1R.' },
+        { h: 'Warum CRV und Trefferquote zusammengehören' },
+        { p: 'Mit CRV 3 darfst du öfter falsch liegen als richtig und trotzdem vorne sein: Bei 30 % Trefferquote ergeben 10 Trades im Schnitt 3 × (+3R) + 7 × (−1R) = +2R. Umgekehrt braucht ein CRV von 0,5 eine Trefferquote von deutlich über 67 %, nur um bei null zu landen — vor Gebühren.' },
+        { table: { caption: 'Mindest-Trefferquote für Break-even (vor Gebühren)', head: ['CRV', 'nötige Trefferquote'], rows: [['0,5', '66,7 %'], ['1', '50 %'], ['2', '33,3 %'], ['3', '25 %']] } },
+        { warn: 'Ein hohes CRV auf dem Papier ist wertlos, wenn das Ziel unrealistisch weit weg liegt. Ziel und Stop müssen beide an nachvollziehbaren Stellen im Markt liegen — sonst ist das CRV nur Dekoration.' },
+        { calc: 'crv' }
+      ],
+      deep: [
+        { label: 'Typischer Anfängerfehler', text: 'Nur auf die Trefferquote schauen. Eine Strategie mit 80 % Trefferquote und Ø −3R-Verlusten ist ein Verlustgeschäft; eine mit 35 % und Ø +2,5R-Gewinnen ist profitabel. Beides zählt nur zusammen: der Erwartungswert.' },
+        { label: 'Mehr Details', text: 'In R zu denken macht Trades vergleichbar, egal wie groß die Position war. Dein Journal (V4) wird Ergebnisse deshalb in R führen: +2R, −1R, +0,5R …' }
+      ],
+      exercise: {
+        intro: 'Berechne:',
+        calc: [
+          { id: 'exR4-1', type: 'num', q: 'Einstieg 100 AED, Stop 98 AED, Ziel 106 AED. CRV?', correct: 3, tol: 0.05, explain: 'Chance 6, Risiko 2 → CRV 3.' },
+          { id: 'exR4-2', type: 'num', q: 'Einstieg 50 AED, Stop 49 AED, Ausstieg mit Gewinn bei 51,50 AED. Ergebnis in R?', correct: 1.5, tol: 0.05, explain: '(51,50 − 50) ÷ (50 − 49) = +1,5R.' },
+          { id: 'exR4-3', type: 'num', q: 'Trefferquote 40 %, Ø-Gewinn +2R, Ø-Verlust −1R. Erwartungswert pro Trade in R? (z. B. 0,2)', correct: 0.2, tol: 0.02, explain: '0,4 × 2 − 0,6 × 1 = 0,2R pro Trade.' }
+        ]
+      },
+      quiz: [
+        { id: 'qR4-1', type: 'num', q: 'Einstieg 20 AED, Stop 19,50 AED, Ziel 21,50 AED. CRV?', correct: 3, tol: 0.05, explain: 'Chance 1,50 ÷ Risiko 0,50 = 3.' },
+        { id: 'qR4-2', type: 'mc', q: 'CRV 0,5 bedeutet:', options: ['Chance doppelt so groß wie Risiko', 'Risiko doppelt so groß wie Chance — du brauchst >67 % Trefferquote für break-even', 'Der Trade ist sicher', 'Die Position ist zu klein'], correct: 1, explain: 'Bei CRV 0,5 riskierst du 2, um 1 zu gewinnen. Das erfordert eine sehr hohe Trefferquote.' },
+        { id: 'qR4-3', type: 'mc', q: 'Eine hohe Trefferquote allein …', options: ['garantiert Gewinn', 'sagt nichts — entscheidend ist der Erwartungswert aus Trefferquote UND Gewinn/Verlust-Größe', 'ist wichtiger als Risikokontrolle', 'macht Stops überflüssig'], correct: 1, riskCritical: true, explain: '80 % Trefferquote mit großen Verlusten ist ein Verlustgeschäft. Beides zählt zusammen.' },
+        { id: 'qR4-4', type: 'num', q: 'Verlusttrade: Einstieg 40, Stop 39, ausgestiegen bei 39. Ergebnis in R? (negativ angeben)', correct: -1, tol: 0.05, explain: 'Ausstieg am Stop = −1R.' },
+        { id: 'qR4-5', type: 'num', q: 'Bei welchem CRV ist eine Trefferquote von 50 % gerade break-even (vor Gebühren)?', correct: 1, tol: 0.05, explain: 'Bei CRV 1 gleichen sich Gewinne und Verluste bei 50 % Trefferquote genau aus.' }
+      ],
+      summary: [
+        'CRV = mögliche Gewinnspanne ÷ Risikospanne, beides an nachvollziehbaren Marktstellen.',
+        'Ergebnisse misst du in R: Gewinn/Verlust geteilt durch dein 1R (Risikobetrag).',
+        'Hohes CRV erlaubt niedrigere Trefferquoten — CRV 3 ist schon mit 25 % break-even.',
+        'Trefferquote allein ist bedeutungslos; nur der Erwartungswert zählt.',
+        'Unrealistische Ziele machen jedes Papier-CRV wertlos.'
+      ]
+    },
+
+    /* ==================== MODUL R — LEKTION 5 ==================== */
+    'R5': {
+      id: 'R5', phase: 'R', title: 'Gebühren und kleine Konten', duration: '10–15 Min.',
+      goal: 'Du kannst den Gebühreneffekt berechnen und erklären, warum kleine Konten besonders geschützt werden müssen.',
+      terms: [
+        { term: 'Ordergebühr', def: 'Was der Broker pro Kauf oder Verkauf berechnet — fix (z. B. 5 AED) oder prozentual.' },
+        { term: 'Spread', def: 'Der Unterschied zwischen Kaufkurs (Ask) und Verkaufskurs (Bid). Du kaufst teurer, als du im selben Moment verkaufen könntest — versteckte Kosten.' },
+        { term: 'Übertrading', def: 'Zu viele Trades ohne echtes Setup. Der schnellste Weg, ein kleines Konto durch Gebühren und Fehler zu leeren.' }
+      ],
+      content: [
+        { p: 'Jeder Trade kostet zweimal Gebühren: beim Kauf und beim Verkauf („Round Trip"). Dazu kommt der Spread. Bei großen Konten fällt das kaum auf — bei 1.000 AED entscheidet es über Gewinn oder Verlust.' },
+        { h: 'Beispiel 1: Gebühren fressen das Risiko' },
+        { p: 'Position 240 AED (12 Stück zu 20 AED), geplantes Risiko 4,80 AED. Ordergebühr: 5 AED pro Order → 10 AED pro Round Trip. Die Gebühren (10 AED) sind mehr als das Doppelte deines geplanten Risikos (4,80 AED)! Selbst ein Gewinn-Trade mit +1R (4,80 AED) wäre nach Gebühren ein Verlust von 5,20 AED.' },
+        { note: 'Konsequenz für dein Lernkonto: Simulierte Gebühren immer mitrechnen, wenige und dafür saubere Trades planen, und CRV-Ziele wählen, die nach Gebühren noch positiv sind. In der Simulation nutzen wir realistische 5 AED je Order als Standard — anpassbar in den Einstellungen später.' },
+        { h: 'Beispiel 2: Übertrading in Zahlen' },
+        { p: '20 impulsive Trades im Monat × 10 AED Round-Trip-Gebühren = 200 AED — ein Fünftel des Kontos, bevor auch nur ein Kurs sich bewegt hat. Dieselben Gebühren bei 4 geplanten Trades: 40 AED. Geduld ist auf kleinen Konten keine Tugend, sondern Überlebensstrategie.' },
+        { calc: 'fees' },
+        { warn: 'Merke: Die App und dein Coach werden dich NIE für viele Trades loben. Belohnt werden ausgelassene schlechte Trades, eingehaltene Regeln und saubere Dokumentation.' }
+      ],
+      deep: [
+        { label: 'Typischer Anfängerfehler', text: 'Gebühren „vergessen", weil sie klein aussehen. 10 AED klingt harmlos — aber es sind 1 % des Kontos pro Round Trip. Wer 2× pro Woche handelt, zahlt ~8 % des Kontos pro Monat nur an Gebühren.' },
+        { label: 'Mehr Details', text: 'Später (Phase 18) rechnen wir mit realen Brokerkonditionen und Slippage. Für jetzt gilt der einfache Standard: 5 AED je Order in jeder Simulationsrechnung.' }
+      ],
+      exercise: {
+        intro: 'Rechne mit 5 AED Gebühr pro Order (Kauf + Verkauf = 10 AED):',
+        calc: [
+          { id: 'exR5-1', type: 'num', q: 'Positionswert 200 AED. Wie viel Prozent des Positionswerts kosten die Round-Trip-Gebühren?', correct: 5, tol: 0.1, explain: '10 ÷ 200 = 5 %.' },
+          { id: 'exR5-2', type: 'num', q: 'Dein Trade gewinnt 12 AED vor Gebühren. Nettoergebnis in AED?', correct: 2, tol: 0.01, explain: '12 − 10 = 2 AED.' },
+          { id: 'exR5-3', type: 'num', q: '15 Round Trips im Monat: Gesamtgebühren in AED?', correct: 150, tol: 0.5, explain: '15 × 10 = 150 AED — 15 % eines 1.000-AED-Kontos.' }
+        ]
+      },
+      quiz: [
+        { id: 'qR5-1', type: 'mc', q: 'Was ist ein „Round Trip"?', options: ['Ein Trade, der zum Einstiegskurs zurückkehrt', 'Kauf + Verkauf = zweimal Gebühren', 'Eine Order, die storniert wurde', 'Ein Tagesausflug'], correct: 1, explain: 'Jeder abgeschlossene Trade kostet Kauf- UND Verkaufsgebühr.' },
+        { id: 'qR5-2', type: 'num', q: 'Gebühr 5 AED je Order. Positionswert 500 AED. Round-Trip-Gebühren in Prozent des Positionswerts?', correct: 2, tol: 0.1, explain: '10 ÷ 500 = 2 %.' },
+        { id: 'qR5-3', type: 'mc', q: 'Warum trifft Übertrading kleine Konten besonders hart?', options: ['Kleine Konten haben höhere Steuersätze', 'Fixe Gebühren und Spreads sind relativ zum Konto viel größer, und Verluste erfordern überproportionale Erholung', 'Broker mögen kleine Konten nicht', 'Es trifft alle gleich'], correct: 1, riskCritical: true, explain: '10 AED Gebühren sind bei 1.000 AED 1 % pro Round Trip — bei 100.000 AED nur 0,01 %.' },
+        { id: 'qR5-4', type: 'mc', q: 'Dein geplantes Risiko ist 5 AED, die Round-Trip-Gebühren sind 10 AED. Was bedeutet das?', options: ['Alles gut, Gebühren zählen nicht als Risiko', 'Der Trade ist so kaum sinnvoll: Selbst +1R wäre netto ein Verlust — Setup, Ziel oder Kosten müssen sich ändern', 'Einfach das Risiko auf 20 AED erhöhen', 'Den Stop weglassen, um Gebühren zu sparen'], correct: 1, riskCritical: true, explain: 'Kostenrealität gehört zur Trade-Planung. Risiko zu erhöhen oder Stops wegzulassen ist keine Lösung.' },
+        { id: 'qR5-5', type: 'mc', q: 'Was ist der Spread?', options: ['Eine Ordergebühr des Brokers', 'Der Unterschied zwischen Kaufkurs (Ask) und Verkaufskurs (Bid)', 'Die Kursbewegung eines Tages', 'Ein Chartmuster'], correct: 1, explain: 'Du kaufst zum Ask und verkaufst zum Bid — die Differenz sind versteckte Kosten jedes Trades.' }
+      ],
+      summary: [
+        'Jeder Trade kostet zweimal Gebühren plus Spread — immer mitrechnen.',
+        'Auf einem 1.000-AED-Konto sind 10 AED Round-Trip-Gebühren 1 % des Kapitals.',
+        'Gebühren können das geplante Risiko übersteigen — dann ist der Trade so nicht sinnvoll.',
+        'Übertrading leert kleine Konten zuverlässig, auch ganz ohne Kursverluste.',
+        'Wenige, geplante, dokumentierte Trades sind die einzige tragfähige Arbeitsweise für kleine Konten.'
+      ]
+    }
+  },
+
+  // ---------- Abschlussprüfung Modul R ----------
+  examR: {
+    id: 'R-EXAM',
+    title: 'Abschlussprüfung: Risiko, Verlust und Positionsgröße',
+    intro: 'Bestehensgrenze: mindestens 80 % UND alle risikokritischen Fragen korrekt. Du kannst die Prüfung beliebig oft wiederholen — Fehler werden erklärt. Taschenrechner erlaubt. Rechne, wo nötig, mit 1.000 AED Kapital.',
+    questions: [
+      { id: 'ex-1', type: 'num', q: 'Kapital 1.000 AED, Risikoregel 0,5 %. Risikobetrag in AED?', correct: 5, tol: 0.01, riskCritical: true, explain: '1.000 × 0,005 = 5 AED.' },
+      { id: 'ex-2', type: 'num', q: 'Risikobetrag 5 AED. Einstieg 25 AED, Stop 24,75 AED. Wie viele Stück darfst du kaufen? (abrunden)', correct: 20, tol: 0.01, riskCritical: true, explain: 'Distanz 0,25 → 5 ÷ 0,25 = 20 Stück.' },
+      { id: 'ex-3', type: 'num', q: 'Wie hoch ist in Frage 2 der Positionswert in AED?', correct: 500, tol: 1, explain: '20 × 25 = 500 AED. Positionswert ≠ Risiko!' },
+      { id: 'ex-4', type: 'mc', q: 'Positionswert und Risikobetrag — welche Aussage stimmt?', options: ['Sie sind identisch', 'Das Risiko ist der geplante Verlust bis zum Stop; der Positionswert ist Stückzahl × Kurs', 'Der Positionswert ist immer kleiner', 'Das Risiko hängt nur vom Positionswert ab'], correct: 1, riskCritical: true, explain: 'Kernunterscheidung aus R1.' },
+      { id: 'ex-5', type: 'num', q: 'Dein Konto fällt um 30 %. Wie viel Prozent Gewinn brauchst du zur Erholung? (eine Nachkommastelle)', correct: 42.9, tol: 0.5, explain: '30 ÷ 70 = 42,9 %.' },
+      { id: 'ex-6', type: 'mc', q: 'Warum ist 5 % Risiko pro Trade ein Konstruktionsfehler?', options: ['Weil Broker es verbieten', 'Weil normale Verlustserien damit Drawdowns erzeugen, die kaum aufholbar sind', 'Weil man damit zu wenig verdient', 'Es ist kein Fehler, Profis machen das so'], correct: 1, riskCritical: true, explain: '8 Verluste à 5 % = −34 %; zur Erholung wären +51 % nötig.' },
+      { id: 'ex-7', type: 'num', q: '1.000 AED, vier Verluste in Folge mit je 0,5 % Kontorisiko. Kontostand danach in ganzen AED?', correct: 980, tol: 1.5, explain: '1.000 × 0,995⁴ ≈ 980 AED.' },
+      { id: 'ex-8', type: 'num', q: 'Einstieg 60 AED, Stop 58 AED, Ziel 66 AED. CRV?', correct: 3, tol: 0.05, explain: 'Chance 6 ÷ Risiko 2 = 3.' },
+      { id: 'ex-9', type: 'num', q: 'Einstieg 45 AED, Stop 44 AED, Ausstieg 47 AED. Ergebnis in R?', correct: 2, tol: 0.05, explain: '(47 − 45) ÷ (45 − 44) = +2R.' },
+      { id: 'ex-10', type: 'mc', q: 'Trefferquote 35 %, Ø-Gewinn +2,5R, Ø-Verlust −1R. Diese Strategie ist …', options: ['ein Verlustgeschäft, weil die Trefferquote unter 50 % liegt', 'profitabel: Erwartungswert = 0,35×2,5 − 0,65×1 = +0,225R pro Trade', 'nicht bewertbar', 'nur mit hohem Risiko profitabel'], correct: 1, explain: 'Trefferquote und Gewinnhöhe zählen nur zusammen (Erwartungswert).' },
+      { id: 'ex-11', type: 'num', q: 'Ordergebühr 5 AED. Positionswert 250 AED. Round-Trip-Gebühren in Prozent des Positionswerts?', correct: 4, tol: 0.1, explain: '10 ÷ 250 = 4 %.' },
+      { id: 'ex-12', type: 'mc', q: 'Dein Plan zeigt: geplantes Risiko 4 AED, Round-Trip-Gebühren 10 AED, CRV 1. Was ist die richtige Entscheidung?', options: ['Trade machen — CRV 1 ist okay', 'Risiko auf 15 AED erhöhen, damit die Gebühren relativ kleiner werden', 'Nicht handeln oder Plan ändern: Nach Gebühren ist selbst der Gewinnfall ein Verlust', 'Stop weglassen'], correct: 2, riskCritical: true, explain: '+1R = 4 AED Gewinn vor Gebühren, −6 AED danach. Nicht zu handeln ist eine vollwertige Entscheidung.' }
+    ]
+  },
+
+  // ---------- Lernvertrag (Onboarding) ----------
+  contract: [
+    'Ich handle in der Ausbildung ausschließlich in der Simulation (Paper Trading) — kein echtes Geld.',
+    'Mein simuliertes Risiko pro Trade beträgt 0,25 % bis maximal 0,5 % meines Kapitals.',
+    'Jeder Trade hat VOR dem Einstieg: Setup-Begründung, Stop-Loss, Ziel und Positionsgröße.',
+    'Ich halte Tages- (1,5 %), Wochen- (3 %) und Monatsverlustgrenzen (6 %) ein und pausiere, wenn sie erreicht sind.',
+    'Ich erwarte keine schnellen Gewinne. Kapitalerhalt und Prozessqualität stehen vor Rendite.',
+    'Nicht zu handeln ist eine vollwertige Entscheidung, kein Versäumnis.'
+  ],
+
+  // ---------- Echtgeld-Kriterien (Anzeige, wie 04_Tracker) ----------
+  echtgeldKriterien: [
+    'Grundlagenprüfung bestanden',
+    'Risikoprüfung bestanden',
+    'Ordertypen sicher verstanden',
+    'Mindestens 30 dokumentierte Paper Trades',
+    'Stabiler regelbasierter Erwartungswert',
+    'Keine schweren Risikoverstöße in den letzten 20 Trades',
+    'Verlustgrenzen (Tag/Woche/Monat) eingehalten',
+    'Jede Position vorab geplant, konsistentes Journal'
+  ],
+
+  // ---------- Glossar ----------
+  glossary: [
+    { term: 'Aktie', def: 'Ein Anteil an einem Unternehmen. Als Aktionär gehört dir ein winziger Teil der Firma.' },
+    { term: 'Ask', def: 'Der Preis, zu dem Verkäufer aktuell verkaufen wollen — dein Kaufkurs.' },
+    { term: 'ATR', def: 'Average True Range — misst, wie stark sich ein Kurs typischerweise pro Tag bewegt. Wichtig für Stop-Abstände (später).' },
+    { term: 'Bid', def: 'Der Preis, den Käufer aktuell zahlen wollen — dein Verkaufskurs.' },
+    { term: 'Broker', def: 'Unternehmen, das deine Kauf- und Verkaufsaufträge an die Börse weiterleitet — gegen Gebühren.' },
+    { term: 'CRV', def: 'Chance-Risiko-Verhältnis: mögliche Gewinnspanne geteilt durch Risikospanne.' },
+    { term: 'Daytrading', def: 'Kaufen und Verkaufen innerhalb desselben Tages. Fortgeschritten, hohe Anforderungen — nichts für den Anfang.' },
+    { term: 'Drawdown', def: 'Rückgang des Kontos vom Höchststand, in Prozent.' },
+    { term: 'Erwartungswert', def: 'Durchschnittliches Ergebnis pro Trade über viele Trades: Trefferquote × Ø-Gewinn − Verlustquote × Ø-Verlust.' },
+    { term: 'ETF', def: 'Börsengehandelter Fonds, der viele Aktien bündelt — z. B. einen ganzen Index.' },
+    { term: 'Gap', def: 'Kurslücke zwischen zwei Handelsphasen. Kurse können über deinen Stop hinweg „springen".' },
+    { term: 'Gebühr (Order)', def: 'Kosten pro Kauf oder Verkauf. In unserer Simulation: 5 AED je Order als Standard.' },
+    { term: 'Glücksspiel', def: 'Einsatz mit zufälligem Ausgang ohne Setup, Verlustbegrenzung und Auswertung. Trading ohne Regeln ist genau das.' },
+    { term: 'Index', def: 'Ein Korb wichtiger Aktien, der einen Markt abbildet (z. B. S&P 500).' },
+    { term: 'Investieren', def: 'Langfristiges Halten von Unternehmensanteilen über Jahre.' },
+    { term: 'Kapitalerhalt', def: 'Oberste Regel: Das Konto schützen, damit du im Spiel bleibst. Steht vor Rendite.' },
+    { term: 'Limit Order', def: 'Auftrag mit Preisgrenze: gekauft/verkauft wird nur zum angegebenen Kurs oder besser (Details in Phase 2).' },
+    { term: 'Liquidität', def: 'Wie leicht sich ein Wertpapier kaufen/verkaufen lässt, ohne den Kurs zu bewegen.' },
+    { term: 'Market Order', def: 'Auftrag zur sofortigen Ausführung zum nächsten verfügbaren Kurs (Details in Phase 2).' },
+    { term: 'Overtrading / Übertrading', def: 'Zu viele Trades ohne echtes Setup — leert kleine Konten über Gebühren und Fehler.' },
+    { term: 'Paper Trading', def: 'Handeln mit simuliertem Geld unter realistischen Bedingungen, inklusive Gebühren und Journal.' },
+    { term: 'Position', def: 'Dein aktueller Bestand in einem Wertpapier.' },
+    { term: 'Positionsgröße', def: 'Stückzahl = Risikobetrag ÷ Stop-Distanz, abgerundet.' },
+    { term: 'Positionswert', def: 'Stückzahl × Kurs. Nicht mit dem Risikobetrag verwechseln!' },
+    { term: 'R / R-Multiple', def: 'Ergebnis gemessen in Einheiten deines Risikobetrags: +2R = doppelter Risikobetrag gewonnen.' },
+    { term: 'Rendite', def: 'Gewinn oder Verlust in Prozent des eingesetzten Kapitals.' },
+    { term: 'Revenge Trading', def: 'Impulsives Handeln nach Verlusten, um sie „zurückzuholen" — vergrößert Schäden fast immer.' },
+    { term: 'Risikobetrag', def: 'Geplanter maximaler Verlust eines Trades bis zum Stop-Loss (dein „1R").' },
+    { term: 'Risk of Ruin', def: 'Gefahr, so viel zu verlieren, dass sinnvolles Weitermachen unmöglich wird.' },
+    { term: 'Setup', def: 'Vorher definierte Marktsituation mit festen Regeln für Einstieg, Stop und Ziel.' },
+    { term: 'Slippage', def: 'Unterschied zwischen erwartetem und tatsächlichem Ausführungskurs.' },
+    { term: 'Spread', def: 'Differenz zwischen Ask (Kaufkurs) und Bid (Verkaufskurs) — versteckte Kosten jedes Trades.' },
+    { term: 'Stop-Distanz', def: 'Abstand zwischen Einstieg und Stop-Loss je Aktie.' },
+    { term: 'Stop-Loss', def: 'Vorher festgelegter Kurs zur Verlustbegrenzung. Planungsgrenze, keine Garantie.' },
+    { term: 'Streak', def: 'Anzahl aufeinanderfolgender Lerntage. Belohnt Lernen — niemals Trade-Häufigkeit.' },
+    { term: 'Swing Trading', def: 'Trades über Tage bis Wochen — der Stil, der zu einer Stunde Zeit am Tag am ehesten passt (Prüfung folgt in 0.7).' },
+    { term: 'Trefferquote', def: 'Anteil der Gewinntrades an allen Trades.' },
+    { term: 'Trading', def: 'Aktives Handeln von Kursbewegungen mit vorab definiertem Ausstieg.' },
+    { term: 'Verlustserie', def: 'Mehrere Verluste in Folge — statistisch normal, auch bei guten Strategien.' },
+    { term: 'Volatilität', def: 'Wie stark ein Kurs schwankt. Hohe Volatilität = größere Bewegungen in beide Richtungen.' },
+    { term: 'Volumen', def: 'Wie viele Stücke in einem Zeitraum gehandelt wurden.' }
+  ]
+};
+if (typeof module !== 'undefined' && module.exports) module.exports = DATA;
+
+/* ============================================================
+   STORE — Laden/Speichern (localStorage), Export/Import, Reset.
+   ============================================================ */
+const STORE = (() => {
+  const KEY = 'ta_state_v1';
+
+  function defaultState() {
+    return {
+      version: 1,
+      profile: { name: '', contractAccepted: false, createdAt: null },
+      settings: { capitalAED: 1000, riskPerTradePct: 0.5, feePerOrderAED: 5 },
+      progress: {
+        currentPhase: 0,
+        currentLesson: '0.1',
+        lessons: {},   // lessonId -> {status,score,attempts,completedAt}
+        exams: {},     // examId  -> {passed,score,attempts,completedAt}
+        phases: { '0': { status: 'current' } }
+      },
+      reviews: [],     // {questionId, lessonId, intervalIdx, dueDate}
+      learningDays: [],
+      log: []
+    };
+  }
+
+  let state = null;
+  let storageOk = true;
+
+  function load() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      state = raw ? migrate(JSON.parse(raw)) : defaultState();
+    } catch (e) {
+      storageOk = false;
+      state = defaultState();
+    }
+    return state;
+  }
+
+  function isObj(x) { return x != null && typeof x === 'object' && !Array.isArray(x); }
+
+  function migrate(s) {
+    // Whitelist + Typprüfung: fremde/kaputte Felder dürfen den State nie zerstören.
+    const d = defaultState();
+    if (!isObj(s)) return d;
+    const prog = isObj(s.progress) ? s.progress : {};
+    return {
+      version: 1,
+      profile: { ...d.profile, ...(isObj(s.profile) ? s.profile : {}) },
+      settings: { ...d.settings, ...(isObj(s.settings) ? s.settings : {}) },
+      progress: {
+        currentPhase: typeof prog.currentPhase === 'number' ? prog.currentPhase : 0,
+        currentLesson: typeof prog.currentLesson === 'string' ? prog.currentLesson : '0.1',
+        lessons: isObj(prog.lessons) ? prog.lessons : {},
+        exams: isObj(prog.exams) ? prog.exams : {},
+        phases: isObj(prog.phases) ? prog.phases : d.progress.phases
+      },
+      reviews: Array.isArray(s.reviews) ? s.reviews.filter(isObj) : [],
+      learningDays: Array.isArray(s.learningDays) ? s.learningDays.filter(x => typeof x === 'string') : [],
+      log: Array.isArray(s.log) ? s.log.filter(isObj) : []
+    };
+  }
+
+  function save() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(state));
+      storageOk = true;
+    } catch (e) { storageOk = false; }
+  }
+
+  function get() { return state || load(); }
+
+  function todayISO() {
+    // Lokales Datum des Geräts (Dubai beim Nutzer)
+    const d = new Date();
+    const off = d.getTimezoneOffset();
+    return new Date(d.getTime() - off * 60000).toISOString().slice(0, 10);
+  }
+
+  function markLearningToday() {
+    const t = todayISO();
+    if (!state.learningDays.includes(t)) { state.learningDays.push(t); state.learningDays.sort(); }
+  }
+
+  function logEvent(type, detail) {
+    state.log.push({ date: new Date().toISOString(), type, detail });
+    if (state.log.length > 500) state.log = state.log.slice(-500);
+  }
+
+  function exportJSON() {
+    return JSON.stringify({ exportedAt: new Date().toISOString(), app: 'trading-academy', ...state }, null, 2);
+  }
+
+  function importJSON(text) {
+    const obj = JSON.parse(text); // wirft bei ungültigem JSON
+    if (!obj || typeof obj !== 'object' || !obj.progress) throw new Error('Keine gültige Trading-Academy-Exportdatei.');
+    state = migrate(obj);
+    save();
+    return state;
+  }
+
+  function reset() {
+    state = defaultState();
+    try { localStorage.removeItem(KEY); } catch (e) {}
+    save();
+    return state;
+  }
+
+  return { load, save, get, defaultState, todayISO, markLearningToday, logEvent, exportJSON, importJSON, reset,
+           get storageOk() { return storageOk; } };
+})();
+if (typeof module !== 'undefined' && module.exports) module.exports = STORE;
+
+/* ============================================================
+   UI — Rendering und Interaktion.
+   Zustandsbasierter Router (funktioniert auch in Sandboxen, die
+   Hash-Navigation, Formular-Submits oder Dialoge blockieren).
+   ============================================================ */
+(() => {
+  const $ = sel => document.querySelector(sel);
+  const app = () => $('#app');
+  const E = ENGINE;
+
+  // ---------- Hilfen ----------
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  // ---------- Router (zustandsbasiert, Hash nur als Komfort) ----------
+  let CURRENT = 'heute';
+  function parseHash() {
+    try { return (location.hash || '').replace(/^#\//, '') || null; } catch (e) { return null; }
+  }
+  function go(route) {
+    CURRENT = route || 'heute';
+    try { history.replaceState(null, '', '#/' + CURRENT); } catch (e) { /* Sandbox: egal */ }
+    render();
+  }
+  // Ein Klick auf irgendein Element mit data-route navigiert — ohne echte Browser-Navigation.
+  document.addEventListener('click', ev => {
+    const t = ev.target.closest('[data-route]');
+    if (t) { ev.preventDefault(); go(t.dataset.route); }
+  });
+  window.addEventListener('hashchange', () => {
+    const h = parseHash();
+    if (h && h !== CURRENT) { CURRENT = h; render(); }
+  });
+
+  // Auswertung an Button-Klick UND Formular-Submit binden — funktioniert
+  // auch in Sandbox-Umgebungen, die Submits blockieren.
+  function bindEval(form, fn) {
+    const run = () => {
+      fn();
+      const r = form.querySelector('.quiz-result');
+      if (r && r.innerHTML.trim()) r.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
+    form.addEventListener('submit', ev => { ev.preventDefault(); run(); });
+    const b = form.querySelector('.js-eval');
+    if (b) b.addEventListener('click', ev => { ev.preventDefault(); run(); });
+  }
+
+  // Link/Button, der intern navigiert (href nur als Fallback/Anzeige)
+  function navLink(route, cls, inner, attrs = '') {
+    return `<a href="#/${route}" data-route="${route}" class="${cls}" ${attrs}>${inner}</a>`;
+  }
+  function navBtn(route, cls, label) {
+    return `<button type="button" class="${cls}" data-route="${route}">${esc(label)}</button>`;
+  }
+
+  // ---------- SVG-Illustrationen ----------
+  const SVGS = {
+    timeline: `
+      <svg viewBox="0 0 640 190" role="img" aria-label="Zeithorizonte: Daytrading bis Investieren">
+        <style>.tl-t{font:600 13px system-ui;fill:#1e3a5f}.tl-s{font:11px system-ui;fill:#5a6b7f}</style>
+        <line x1="40" y1="140" x2="600" y2="140" stroke="#c3cfdd" stroke-width="2"/>
+        <g><rect x="40" y="98" width="70" height="26" rx="6" fill="#e8eef6"/><text x="75" y="115" text-anchor="middle" class="tl-s">Stunden</text><text x="75" y="160" text-anchor="middle" class="tl-t">Daytrading</text></g>
+        <g><rect x="150" y="98" width="110" height="26" rx="6" fill="#dbe7f3"/><text x="205" y="115" text-anchor="middle" class="tl-s">Tage–Wochen</text><text x="205" y="160" text-anchor="middle" class="tl-t">Swing Trading</text></g>
+        <g><rect x="300" y="98" width="120" height="26" rx="6" fill="#cddcee"/><text x="360" y="115" text-anchor="middle" class="tl-s">Wochen–Monate</text><text x="360" y="160" text-anchor="middle" class="tl-t">Position Trading</text></g>
+        <g><rect x="460" y="98" width="120" height="26" rx="6" fill="#bfd2e8"/><text x="520" y="115" text-anchor="middle" class="tl-s">Jahre</text><text x="520" y="160" text-anchor="middle" class="tl-t">Investieren</text></g>
+        <text x="40" y="40" class="tl-t">← kürzer: mehr Aufwand, Kosten, Stress</text>
+        <text x="600" y="40" text-anchor="end" class="tl-t">länger: mehr Geduld →</text>
+        <text x="320" y="66" text-anchor="middle" class="tl-s">Alle Stile sind legitim — sie stellen nur völlig verschiedene Anforderungen.</text>
+      </svg>`,
+    'risk-vs-position': `
+      <svg viewBox="0 0 640 210" role="img" aria-label="Positionswert vs. Risikobetrag">
+        <style>.rv-t{font:600 13px system-ui;fill:#1e3a5f}.rv-s{font:11px system-ui;fill:#5a6b7f}</style>
+        <text x="60" y="28" class="rv-t">Kapital: 1.000 AED</text>
+        <rect x="60" y="40" width="500" height="30" rx="6" fill="#e8eef6" stroke="#c3cfdd"/>
+        <text x="60" y="102" class="rv-t">Positionswert: 400 AED (10 Stück × 40 AED)</text>
+        <rect x="60" y="112" width="200" height="30" rx="6" fill="#bfd2e8" stroke="#9db8d6"/>
+        <text x="60" y="176" class="rv-t">Geplantes Risiko: nur 5 AED (10 × 0,50 Stop-Distanz)</text>
+        <rect x="60" y="184" width="8" height="18" rx="2" fill="#c0392b"/>
+        <text x="80" y="198" class="rv-s">= 0,5 % des Kapitals — DAS ist deine Risikozahl.</text>
+      </svg>`,
+    'position-formula': `
+      <svg viewBox="0 0 640 150" role="img" aria-label="Formel Positionsgröße">
+        <style>.pf-b{font:700 17px system-ui;fill:#1e3a5f}.pf-s{font:12px system-ui;fill:#5a6b7f}</style>
+        <rect x="40" y="30" width="560" height="60" rx="10" fill="#eef3f9" stroke="#c3cfdd"/>
+        <text x="320" y="67" text-anchor="middle" class="pf-b">Stückzahl = Risikobetrag ÷ Stop-Distanz  (abrunden!)</text>
+        <text x="320" y="120" text-anchor="middle" class="pf-s">Reihenfolge: 1. Stop setzen (wo ist die Idee falsch?) → 2. Risikobetrag (0,25–0,5 %) → 3. Stückzahl</text>
+      </svg>`
+  };
+
+  // ---------- Interaktive Rechner ----------
+  const CALCS = {
+    riskamount: {
+      title: 'Rechner: Dein Risikobetrag',
+      fields: [
+        { id: 'cap', label: 'Kapital (AED)', val: '1000' },
+        { id: 'risk', label: 'Risiko pro Trade (%)', val: '0,5' }
+      ],
+      compute(v) {
+        const r = E.riskAmount(E.parseNum(v.cap), E.parseNum(v.risk));
+        if (!isFinite(r)) return 'Bitte gültige Zahlen eingeben.';
+        return `Risikobetrag: <b>${E.fmtAED(r)}</b> — mehr darf dieser Trade planmäßig nicht verlieren.`;
+      }
+    },
+    position: {
+      title: 'Rechner: Positionsgröße',
+      fields: [
+        { id: 'cap', label: 'Kapital (AED)', val: '1000' },
+        { id: 'risk', label: 'Risiko (%)', val: '0,5' },
+        { id: 'entry', label: 'Einstieg (AED)', val: '20' },
+        { id: 'stop', label: 'Stop-Loss (AED)', val: '19,60' }
+      ],
+      compute(v) {
+        const p = E.positionSize(E.parseNum(v.cap), E.parseNum(v.risk), E.parseNum(v.entry), E.parseNum(v.stop));
+        if (!p) return 'Bitte gültige Zahlen eingeben.';
+        if (p.error === 'stop_not_below_entry') return '⚠️ Der Stop muss unter dem Einstieg liegen (wir handeln in V1 nur Long, ohne Hebel).';
+        if (p.shares < 1) return '⚠️ Mit diesem Risiko und dieser Stop-Distanz ist keine ganze Aktie kaufbar. Stop-Distanz zu groß für das Konto — dieser Trade ist so nicht handelbar. Das ist ein gültiges, wichtiges Ergebnis!';
+        let out = `Risikobetrag: <b>${E.fmtAED(p.riskAmount)}</b> · Stop-Distanz: <b>${E.fmtAED(p.stopDistance)}</b> (${E.fmtPct(p.stopDistancePct, 1)})<br>
+          Erlaubte Stückzahl: <b>${p.shares} Stück</b> · Positionswert: <b>${E.fmtAED(p.positionValue)}</b> · tatsächliches Risiko: <b>${E.fmtAED(p.actualRiskAED)}</b>`;
+        if (p.exceedsCapital) out += '<br>⚠️ <b>Positionswert übersteigt dein Kapital</b> — ohne Hebel nicht umsetzbar. Kleinere Position oder kein Trade.';
+        return out;
+      }
+    },
+    recovery: {
+      title: 'Rechner: Nötige Erholung nach Verlust',
+      fields: [{ id: 'loss', label: 'Verlust (%)', val: '10' }],
+      compute(v) {
+        const r = E.recoveryNeededPct(E.parseNum(v.loss));
+        if (!isFinite(r)) return 'Bitte einen Verlust zwischen 0 und 100 % eingeben.';
+        return `Nach <b>−${E.fmt(E.parseNum(v.loss), 1)} %</b> brauchst du <b>+${E.fmt(r, 1)} %</b> Gewinn, nur um auf null zurückzukommen.`;
+      }
+    },
+    lossseries: {
+      title: 'Rechner: Verlustserie',
+      fields: [
+        { id: 'cap', label: 'Kapital (AED)', val: '1000' },
+        { id: 'risk', label: 'Verlust pro Trade (% vom Konto)', val: '5' },
+        { id: 'n', label: 'Anzahl Verluste in Folge', val: '8' }
+      ],
+      compute(v) {
+        const b = E.balanceAfterLosses(E.parseNum(v.cap), E.parseNum(v.risk), E.parseNum(v.n));
+        if (!isFinite(b)) return 'Bitte gültige Zahlen eingeben.';
+        const lossPct = (1 - b / E.parseNum(v.cap)) * 100;
+        const rec = E.recoveryNeededPct(lossPct);
+        return `Kontostand danach: <b>${E.fmtAED(b, 0)}</b> (Drawdown <b>−${E.fmt(lossPct, 1)} %</b>).<br>Nötige Erholung: <b>+${E.fmt(rec, 1)} %</b>. Probiere zum Vergleich 0,5 % pro Trade!`;
+      }
+    },
+    crv: {
+      title: 'Rechner: Chance-Risiko-Verhältnis',
+      fields: [
+        { id: 'entry', label: 'Einstieg (AED)', val: '30' },
+        { id: 'stop', label: 'Stop (AED)', val: '29' },
+        { id: 'target', label: 'Ziel (AED)', val: '33' }
+      ],
+      compute(v) {
+        const r = E.crv(E.parseNum(v.entry), E.parseNum(v.stop), E.parseNum(v.target));
+        if (!isFinite(r)) return '⚠️ Prüfe die Eingaben: Stop unter Einstieg, Ziel über Einstieg.';
+        let note = r >= 2 ? 'Solide Basis — wenn Stop und Ziel fachlich begründet sind.' : r >= 1 ? 'Grenzwertig: erfordert hohe Trefferquote, Gebühren beachten.' : 'Ungünstig: Risiko größer als Chance — meist besser: kein Trade.';
+        return `CRV: <b>${E.fmt(r, 2)}</b> · Gewinnfall: <b>+${E.fmt(r, 2)}R</b>, Verlustfall: <b>−1R</b>.<br>${note}`;
+      }
+    },
+    fees: {
+      title: 'Rechner: Gebühreneffekt',
+      fields: [
+        { id: 'pos', label: 'Positionswert (AED)', val: '240' },
+        { id: 'fee', label: 'Gebühr je Order (AED)', val: '5' }
+      ],
+      compute(v) {
+        const f = E.feeRoundTrip(E.parseNum(v.pos), E.parseNum(v.fee));
+        if (!f || !isFinite(f.totalFees)) return 'Bitte gültige Zahlen eingeben.';
+        return `Round-Trip-Gebühren: <b>${E.fmtAED(f.totalFees)}</b> = <b>${E.fmtPct(f.pctOfPosition, 2)}</b> des Positionswerts.<br>Dein Trade muss erst diese Hürde überspringen, bevor er netto gewinnt.`;
+      }
+    }
+  };
+
+  function calcWidget(kind) {
+    const c = CALCS[kind];
+    if (!c) return '';
+    const fields = c.fields.map(f =>
+      `<label class="calc-field"><span>${esc(f.label)}</span><input type="text" inputmode="decimal" data-cid="${f.id}" value="${esc(f.val)}"></label>`).join('');
+    return `<div class="calc" data-calc="${kind}">
+      <div class="calc-title">🧮 ${esc(c.title)}</div>
+      <div class="calc-fields">${fields}</div>
+      <div class="calc-out" aria-live="polite"></div>
+    </div>`;
+  }
+  function wireCalcs(root) {
+    root.querySelectorAll('.calc').forEach(box => {
+      const kind = box.dataset.calc, c = CALCS[kind];
+      const update = () => {
+        const v = {};
+        box.querySelectorAll('input').forEach(i => v[i.dataset.cid] = i.value);
+        box.querySelector('.calc-out').innerHTML = c.compute(v);
+      };
+      box.querySelectorAll('input').forEach(i => i.addEventListener('input', update));
+      update();
+    });
+  }
+
+  // ---------- Fortschritts-Helfer ----------
+  function lessonState(id) { return STORE.get().progress.lessons[id]; }
+  function isDone(id) { const l = lessonState(id); return !!l && l.status === 'done'; }
+  function phase0DoneCount() { return DATA.phase0Lessons.filter(l => isDone(l.id)).length; }
+  function moduleRDoneCount() { return DATA.moduleR.lessons.filter(id => isDone(id)).length; }
+  function examRPassed() { const e = STORE.get().progress.exams['R-EXAM']; return !!e && e.passed; }
+  function moduleRComplete() { return moduleRDoneCount() === DATA.moduleR.lessons.length && examRPassed(); }
+
+  // Nächster sinnvoller Schritt — nur Einheiten, die es wirklich gibt.
+  function nextOpenLesson() {
+    if (!isDone('0.1')) return { type: 'lesson', id: '0.1' };
+    for (const id of DATA.moduleR.lessons) if (!isDone(id)) return { type: 'lesson', id };
+    if (!examRPassed()) return { type: 'exam', id: 'R-EXAM' };
+    const next = DATA.phase0Lessons.find(l => !isDone(l.id) && DATA.lessons[l.id]);
+    return next ? { type: 'lesson', id: next.id } : null;
+  }
+  function stepTitle(step) {
+    if (!step) return null;
+    return step.type === 'exam' ? DATA.examR.title : (DATA.lessons[step.id]?.title || step.id);
+  }
+  function stepRoute(step) {
+    return step.type === 'exam' ? 'pruefung/R-EXAM' : 'lektion/' + step.id;
+  }
+
+  // ---------- Navigation ----------
+  const NAV = [
+    { route: 'heute', label: 'Heute', icon: '☀️' },
+    { route: 'lernpfad', label: 'Lernpfad', icon: '🗺️' },
+    { route: 'glossar', label: 'Glossar', icon: '📖' },
+    { route: 'fortschritt', label: 'Fortschritt', icon: '📈' },
+    { route: 'einstellungen', label: 'Einstellungen', icon: '⚙️' }
+  ];
+  function renderNav(active) {
+    return `<nav class="nav">
+      <div class="nav-brand">Trading<span>Academy</span></div>
+      ${NAV.map(n => navLink(n.route, 'nav-item ' + (active === n.route ? 'active' : ''), `<span class="nav-ic">${n.icon}</span>${n.label}`)).join('')}
+      <div class="nav-foot">Nur Simulation.<br>Kein echtes Geld.</div>
+    </nav>`;
+  }
+
+  function shell(active, content) {
+    const warn = STORE.storageOk ? '' :
+      `<div class="banner warn">⚠️ Diese Umgebung speichert keinen Fortschritt (Vorschau-Modus). Zum richtigen Lernen: <b>02_App/index.html</b> auf deinem Mac doppelklicken.</div>`;
+    app().innerHTML = `${renderNav(active)}<main class="main">${warn}${content}</main>`;
+    try { window.scrollTo(0, 0); } catch (e) {}
+  }
+
+  // ---------- Onboarding ----------
+  function renderOnboarding() {
+    const items = DATA.contract.map((c, i) =>
+      `<label class="contract-item"><input type="checkbox" data-ci="${i}"> <span>${esc(c)}</span></label>`).join('');
+    app().innerHTML = `<div class="onboard">
+      <div class="onboard-card">
+        <h1>Trading Academy</h1>
+        <p class="muted">Deine persönliche Ausbildung — Schritt für Schritt, ehrlich, ohne Gewinnversprechen.</p>
+        <label class="calc-field"><span>Wie soll ich dich nennen?</span><input type="text" id="ob-name" placeholder="Vorname" maxlength="40"></label>
+        <h2>Dein Lernvertrag</h2>
+        <p class="muted small">Diese Regeln schützen dein Kapital. Bitte lies jede einzeln und bestätige sie.</p>
+        ${items}
+        <button class="btn primary" id="ob-go" type="button" disabled>Ausbildung starten</button>
+        <div id="ob-hint" class="muted small" aria-live="polite"></div>
+      </div>
+    </div>`;
+    const boxes = [...document.querySelectorAll('[data-ci]')];
+    const name = $('#ob-name'), btn = $('#ob-go'), hint = $('#ob-hint');
+    const check = () => {
+      const open = [];
+      if (!name.value.trim()) open.push('Name eintragen');
+      const missing = boxes.filter(b => !b.checked).length;
+      if (missing) open.push(missing + (missing === 1 ? ' Regel bestätigen' : ' Regeln bestätigen'));
+      btn.disabled = open.length > 0;
+      hint.textContent = open.length ? 'Noch offen: ' + open.join(' · ') : 'Alles bereit — los geht’s!';
+    };
+    boxes.forEach(b => b.addEventListener('change', check));
+    name.addEventListener('input', check);
+    check();
+    btn.addEventListener('click', () => {
+      const s = STORE.get();
+      s.profile.name = name.value.trim();
+      s.profile.contractAccepted = true;
+      s.profile.createdAt = new Date().toISOString();
+      STORE.logEvent('profile_created', s.profile.name);
+      STORE.save();
+      go('heute');
+    });
+  }
+
+  // ---------- Ansicht: Heute ----------
+  function viewHeute() {
+    const s = STORE.get();
+    const today = STORE.todayISO();
+    const streak = E.computeStreak(s.learningDays, today);
+    const due = E.dueReviews(s.reviews, today).filter(r => findQuestion(r.questionId));
+    const next = nextOpenLesson();
+    const doneCount = Object.values(s.progress.lessons).filter(l => l.status === 'done').length;
+
+    shell('heute', `
+      <h1>Hallo ${esc(s.profile.name)} 👋</h1>
+      <p class="muted">Eine Lektion dauert 10–20 Minuten — ideal für dein Lernfenster am Abend.</p>
+      <div class="cards">
+        <div class="card stat"><div class="stat-num">${streak}</div><div class="stat-label">Lern-Streak (Tage)</div></div>
+        <div class="card stat"><div class="stat-num">${s.learningDays.length}</div><div class="stat-label">Lerntage gesamt</div></div>
+        <div class="card stat"><div class="stat-num">${doneCount}</div><div class="stat-label">Lektionen bestanden</div></div>
+        <div class="card stat"><div class="stat-num">${due.length}</div><div class="stat-label">Wiederholungen fällig</div></div>
+      </div>
+      ${due.length ? `<div class="card next-card">
+        <div class="card-kicker">Zuerst: kurze Wiederholung (${due.length})</div>
+        <p class="muted">Wiederholen festigt mehr als Neues lernen — dauert nur 2–3 Minuten.</p>
+        ${navBtn('wiederholen', 'btn primary', 'Wiederholung starten')}
+      </div>` : ''}
+      ${next ? `<div class="card ${due.length ? '' : 'next-card'}">
+        <div class="card-kicker">Dein nächster Schritt</div>
+        <h2>${next.type === 'exam' ? '📝 ' : '📚 '}${esc(stepTitle(next))}</h2>
+        <p class="muted">${next.type === 'exam' ? 'Abschlussprüfung des Risikomoduls — ≥ 80 % und alle 🛡️-Fragen korrekt.' : 'Empfohlene nächste Lerneinheit.'}</p>
+        ${navBtn(stepRoute(next), 'btn primary', 'Jetzt starten')}
+      </div>` : `<div class="card next-card"><h2>🎓 Alle aktuellen Inhalte abgeschlossen!</h2>
+        <p class="muted">Stark! Sag deinem Coach (Claude) Bescheid — er schaltet die nächsten Lektionen frei und überträgt deinen Stand in den Tracker. Bis dahin: Wiederholungen machen oder im Glossar stöbern.</p>
+        ${navBtn('fortschritt', 'btn', 'Fortschritt ansehen')}</div>`}
+      <div class="card muted-card"><b>Erinnerung:</b> Belohnt werden Geduld, eingehaltene Regeln und saubere Dokumentation — nie die Anzahl von Trades. Nicht zu handeln ist eine vollwertige Entscheidung.</div>
+    `);
+  }
+
+  // ---------- Ansicht: Lernpfad ----------
+  function viewLernpfad() {
+    const s = STORE.get();
+    const rDone = moduleRDoneCount(), rTotal = DATA.moduleR.lessons.length;
+    const rLessons = DATA.moduleR.lessons.map((id, idx) => {
+      const l = DATA.lessons[id];
+      const done = isDone(id);
+      const prevDone = idx === 0 || isDone(DATA.moduleR.lessons[idx - 1]);
+      const locked = !done && !prevDone;
+      return lessonRow(id, l.title, done, locked, 'lektion/' + id, lessonState(id));
+    }).join('');
+    const examRow = (() => {
+      const allDone = rDone === rTotal;
+      const passed = examRPassed();
+      const ex = s.progress.exams['R-EXAM'];
+      return lessonRow('R-EXAM', DATA.examR.title, passed, !allDone && !passed, 'pruefung/R-EXAM', ex, true);
+    })();
+
+    const phasesHtml = DATA.phases.map(ph => {
+      let status, doneCnt = 0;
+      if (ph.id === 0) {
+        doneCnt = phase0DoneCount();
+        status = doneCnt >= DATA.phase0Lessons.length ? 'done' : 'current';
+      } else {
+        status = E.phaseStatus(ph.id, s.progress);
+      }
+      const badge = status === 'done' ? '✅' : status === 'current' ? '🔓' : '🔒';
+      let inner = '';
+      if (ph.id === 0) {
+        inner = DATA.phase0Lessons.map((l, idx) => {
+          const done = isDone(l.id);
+          const hasContent = !!DATA.lessons[l.id];
+          const prevDone = idx === 0 || isDone(DATA.phase0Lessons[idx - 1].id);
+          if (hasContent) return lessonRow(l.id, l.title, done, !done && !prevDone, 'lektion/' + l.id, lessonState(l.id));
+          return `<div class="lesson-row planned"><span class="lr-badge">•</span><span class="lr-title">${esc(l.id)} — ${esc(l.title)}</span><span class="lr-meta">Inhalt folgt — mit dem Coach lernbar</span></div>`;
+        }).join('');
+      } else {
+        inner = `<div class="phase-locked-note">Wird freigeschaltet, wenn Phase ${ph.id - 1} mit ≥ 80 % und ohne schwere Risikofehler abgeschlossen ist. ${ph.lessonsTotal} Lektionen geplant.</div>`;
+      }
+      return `<details class="phase" ${ph.id === 0 ? 'open' : ''} ${status === 'locked' ? 'data-locked="1"' : ''}>
+        <summary><span class="ph-badge">${badge}</span><span class="ph-title">Phase ${ph.id}: ${esc(ph.title)}</span>
+        <span class="ph-meta">${ph.id === 0 ? doneCnt + ' / ' + DATA.phase0Lessons.length : '0 / ' + ph.lessonsTotal}</span></summary>
+        <div class="phase-body">${inner}</div>
+      </details>`;
+    }).join('');
+
+    shell('lernpfad', `
+      <h1>Lernpfad</h1>
+      <p class="muted">Du siehst den ganzen Weg — freigeschaltet wird Schritt für Schritt, durch nachgewiesenes Verständnis.</p>
+      <div class="card module-r ${moduleRComplete() ? 'complete' : ''}">
+        <div class="card-kicker">Pflichtmodul · von Anfang an offen</div>
+        <h2>🛡️ ${esc(DATA.moduleR.title)}</h2>
+        <p class="muted">${esc(DATA.moduleR.subtitle)} Fortschritt: ${rDone} / ${rTotal} Lektionen ${examRPassed() ? '· Prüfung bestanden ✅' : ''}</p>
+        <div class="lesson-list">${rLessons}${examRow}</div>
+      </div>
+      <h2 class="section-h">Die 20 Phasen</h2>
+      ${phasesHtml}
+    `);
+  }
+
+  function lessonRow(id, title, done, locked, route, st, isExam) {
+    const badge = done ? '✅' : locked ? '🔒' : '▶️';
+    const meta = done && st ? `bestanden · ${Math.round(st.score)} %` : locked ? 'erst Vorherige abschließen' : (isExam ? 'Prüfung' : 'offen');
+    if (locked) return `<div class="lesson-row locked"><span class="lr-badge">${badge}</span><span class="lr-title">${esc(id)} — ${esc(title)}</span><span class="lr-meta">${meta}</span></div>`;
+    return navLink(route, 'lesson-row ' + (done ? 'done' : ''), `<span class="lr-badge">${badge}</span><span class="lr-title">${esc(id)} — ${esc(title)}</span><span class="lr-meta">${meta}</span>`);
+  }
+
+  // ---------- Lektion rendern ----------
+  function blockHtml(b) {
+    if (b.p) return `<p>${b.p}</p>`;
+    if (b.h) return `<h3>${esc(b.h)}</h3>`;
+    if (b.list) return `<ul>${b.list.map(i => `<li>${i}</li>`).join('')}</ul>`;
+    if (b.note) return `<div class="note">💡 ${b.note}</div>`;
+    if (b.warn) return `<div class="warnbox">⚠️ ${b.warn}</div>`;
+    if (b.svg) return `<div class="figure">${SVGS[b.svg] || ''}</div>`;
+    if (b.calc) return calcWidget(b.calc);
+    if (b.table) {
+      const t = b.table;
+      return `<div class="tablewrap"><table>${t.caption ? `<caption>${esc(t.caption)}</caption>` : ''}
+        <thead><tr>${t.head.map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead>
+        <tbody>${t.rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    }
+    return '';
+  }
+
+  const RC_BADGE = ' <span class="rc" role="img" aria-label="risikokritische Frage — muss korrekt sein" title="risikokritisch — muss korrekt sein">🛡️</span>';
+
+  function questionHtml(q, idx) {
+    if (q.type === 'mc') {
+      return `<fieldset class="q" data-qid="${q.id}"><legend>${idx + 1}. ${esc(q.q)}${q.riskCritical ? RC_BADGE : ''}</legend>
+        ${q.options.map((o, i) => `<label class="q-opt"><input type="radio" name="${q.id}" value="${i}"> <span>${esc(o)}</span></label>`).join('')}
+        <div class="q-fb"></div></fieldset>`;
+    }
+    return `<fieldset class="q" data-qid="${q.id}"><legend>${idx + 1}. ${esc(q.q)}${q.riskCritical ? RC_BADGE : ''}</legend>
+      <input type="text" inputmode="decimal" class="q-num" name="${q.id}" placeholder="Zahl, z. B. 12,5">
+      <div class="q-fb"></div></fieldset>`;
+  }
+
+  function collectAnswers(root, questions) {
+    const answers = {};
+    for (const q of questions) {
+      if (q.type === 'mc') {
+        const sel = root.querySelector(`input[name="${q.id}"]:checked`);
+        answers[q.id] = sel ? sel.value : null;
+      } else {
+        const inp = root.querySelector(`input[name="${q.id}"]`);
+        answers[q.id] = inp ? inp.value : null;
+      }
+    }
+    return answers;
+  }
+
+  // Unbeantwortete Fragen markieren; true, wenn alles beantwortet ist.
+  function checkAnswered(form, questions, answers) {
+    const open = [];
+    questions.forEach((q, i) => {
+      const box = form.querySelector(`[data-qid="${q.id}"]`);
+      const empty = answers[q.id] == null || answers[q.id] === '';
+      box.classList.toggle('unanswered', empty);
+      if (empty) { open.push(i + 1); box.querySelector('.q-fb').innerHTML = '<span class="fb-open">Bitte beantworten.</span>'; }
+      else if (box.querySelector('.q-fb .fb-open')) box.querySelector('.q-fb').innerHTML = '';
+    });
+    if (open.length) {
+      form.querySelector('.quiz-result').innerHTML = `<div class="card warn-card">Bitte beantworte noch die Frage${open.length > 1 ? 'n' : ''} <b>${open.join(', ')}</b>.</div>`;
+      const first = form.querySelector('.q.unanswered');
+      if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return false;
+    }
+    return true;
+  }
+
+  function showFeedback(root, questions, answers, result) {
+    for (const q of questions) {
+      const box = root.querySelector(`[data-qid="${q.id}"]`);
+      const fb = box.querySelector('.q-fb');
+      const ok = !result.wrong.includes(q.id);
+      box.classList.remove('ok', 'bad', 'unanswered');
+      box.classList.add(ok ? 'ok' : 'bad');
+      if (ok) fb.innerHTML = `<span class="fb-ok">✔️ Richtig.</span> ${esc(q.explain || '')}`;
+      else {
+        let corr = q.type === 'mc' ? `Richtige Antwort: „${esc(q.options[q.correct])}"` : `Richtige Antwort: ${E.fmt(q.correct, 2)}`;
+        fb.innerHTML = `<span class="fb-bad">✘ Noch nicht.</span> ${corr}. ${esc(q.explain || '')}${q.riskCritical ? '<br><b>🛡️ Risikokritisch — diese Frage muss für die Freischaltung korrekt sein.</b>' : ''}`;
+      }
+    }
+  }
+
+  function wrongNumbers(questions, result) {
+    return questions.map((q, i) => result.wrong.includes(q.id) ? i + 1 : null).filter(Boolean);
+  }
+
+  function addRetryButton(form, questions) {
+    const box = form.querySelector('.quiz-result .warn-card');
+    if (!box || box.querySelector('.js-retry')) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn js-retry';
+    btn.textContent = '🔁 Neu starten (Antworten leeren)';
+    btn.addEventListener('click', () => {
+      try { form.reset(); } catch (e) {}
+      form.querySelectorAll('.q').forEach(qq => { qq.classList.remove('ok', 'bad', 'unanswered'); qq.querySelector('.q-fb').innerHTML = ''; });
+      form.querySelector('.quiz-result').innerHTML = '';
+      const first = form.querySelector('.q');
+      if (first) first.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    box.appendChild(document.createElement('br'));
+    box.appendChild(btn);
+  }
+
+  function viewLektion(id) {
+    const l = DATA.lessons[id];
+    if (!l) {
+      const planned = DATA.phase0Lessons.find(x => x.id === id);
+      shell('lernpfad', `${navLink('lernpfad', 'back', '← Lernpfad')}<h1>${esc(id)} — ${esc(planned ? planned.title : 'Lektion')}</h1>
+        <div class="card"><p>Diese Lektion wird in der nächsten Ausbaustufe der App ergänzt. Du kannst sie schon jetzt <b>mit deinem Coach</b> (Claude) lernen — der Fortschritt wird dann im Tracker vermerkt.</p>${navBtn('lernpfad', 'btn', 'Zurück zum Lernpfad')}</div>`);
+      return;
+    }
+    const done = isDone(id);
+    const terms = l.terms.map(t => `<details class="term" open><summary>${esc(t.term)}</summary><p>${esc(t.def)}</p></details>`).join('');
+    const content = l.content.map(blockHtml).join('');
+    const deep = (l.deep || []).map(d => `<details class="deep"><summary>${esc(d.label)}</summary><p>${esc(d.text)}</p></details>`).join('');
+
+    let exerciseHtml = '';
+    if (l.exercise) {
+      if (l.exercise.items) {
+        exerciseHtml = `<h2>✏️ Übung</h2><p class="muted">${esc(l.exercise.intro)}</p>` + l.exercise.items.map((it, i) => `
+          <div class="ex-item" data-exi="${i}">
+            <p>${esc(it.text)}</p>
+            <div class="ex-opts">${it.options.map((o, oi) => `<button type="button" class="btn chip" data-oi="${oi}">${esc(o)}</button>`).join('')}</div>
+            <div class="q-fb"></div>
+          </div>`).join('');
+      } else if (l.exercise.calc) {
+        exerciseHtml = `<h2>✏️ Übung</h2><p class="muted">${esc(l.exercise.intro)}</p>
+          <form class="ex-calc">${l.exercise.calc.map((q, i) => questionHtml(q, i)).join('')}
+          <button class="btn js-eval" type="button">Übung prüfen</button><div class="quiz-result" role="status" aria-live="polite"></div></form>`;
+      }
+    }
+
+    // „Weiter"-Ziel für die Zusammenfassung (Duolingo-Prinzip: immer genau ein nächster Schritt)
+    const next = nextOpenLesson();
+    const nextIsThis = next && next.type === 'lesson' && next.id === id;
+    const afterThis = nextIsThis ? (() => {
+      // Was käme nach Bestehen DIESER Lektion?
+      if (id === '0.1') return { label: 'Weiter zu R1 — Was bedeutet Risiko? →', route: 'lektion/R1' };
+      const ridx = DATA.moduleR.lessons.indexOf(id);
+      if (ridx >= 0 && ridx < DATA.moduleR.lessons.length - 1) {
+        const nid = DATA.moduleR.lessons[ridx + 1];
+        return { label: `Weiter zu ${nid} — ${DATA.lessons[nid].title} →`, route: 'lektion/' + nid };
+      }
+      if (ridx === DATA.moduleR.lessons.length - 1) return { label: 'Weiter zur Abschlussprüfung →', route: 'pruefung/R-EXAM' };
+      return { label: 'Weiter im Lernpfad →', route: 'lernpfad' };
+    })() : (next ? { label: `Weiter: ${stepTitle(next)} →`, route: stepRoute(next) } : { label: 'Zum Lernpfad →', route: 'lernpfad' });
+
+    shell('lernpfad', `
+      ${navLink('lernpfad', 'back', '← Lernpfad')}
+      <div class="lesson-head">
+        <h1>${esc(l.id)} — ${esc(l.title)}</h1>
+        <span class="pill">${esc(l.duration)}</span>${done ? '<span class="pill done-pill">✅ bestanden</span>' : ''}
+      </div>
+      <div class="card goal"><b>🎯 Lernziel:</b> ${esc(l.goal)}</div>
+      <h2>Kernbegriffe (${l.terms.length})</h2>
+      <div class="terms">${terms}</div>
+      <div class="lesson-content">${content}</div>
+      ${deep ? `<h2>Vertiefung (freiwillig)</h2>${deep}` : ''}
+      ${exerciseHtml}
+      <h2>📝 Wissenstest</h2>
+      <p class="muted">Bestanden ab 80 % — Fragen mit 🛡️ (risikokritisch) müssen korrekt sein. Du kannst beliebig oft wiederholen.</p>
+      <form class="quiz">${l.quiz.map((q, i) => questionHtml(q, i)).join('')}
+        <button class="btn primary js-eval" type="button">Test auswerten</button>
+        <div class="quiz-result" role="status" aria-live="polite"></div>
+      </form>
+      <div class="summary-box" style="display:${done ? 'block' : 'none'}">
+        <h2>Zusammenfassung in 5 Sätzen</h2>
+        <ol>${l.summary.map(x => `<li>${esc(x)}</li>`).join('')}</ol>
+        ${navBtn(afterThis.route, 'btn primary', afterThis.label)}
+      </div>
+    `);
+
+    const main = $('.main');
+    wireCalcs(main);
+
+    // Zuordnungs-Übung
+    main.querySelectorAll('.ex-item').forEach(box => {
+      const it = l.exercise.items[Number(box.dataset.exi)];
+      box.querySelectorAll('.chip').forEach(btn => btn.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        const pick = Number(btn.dataset.oi);
+        const fb = box.querySelector('.q-fb');
+        box.querySelectorAll('.chip').forEach(b => b.classList.remove('sel-ok', 'sel-bad'));
+        if (pick === it.correct) { btn.classList.add('sel-ok'); fb.innerHTML = `<span class="fb-ok">✔️ Richtig.</span> ${esc(it.explain)}`; }
+        else { btn.classList.add('sel-bad'); fb.innerHTML = `<span class="fb-bad">✘ Noch nicht.</span> ${esc(it.explain)}`; }
+      }));
+    });
+
+    // Rechen-Übung
+    const exForm = main.querySelector('.ex-calc');
+    if (exForm) bindEval(exForm, () => {
+      const qs = l.exercise.calc;
+      const answers = collectAnswers(exForm, qs);
+      const res = E.gradeQuiz(qs, answers);
+      showFeedback(exForm, qs, answers, res);
+      exForm.querySelector('.quiz-result').innerHTML = `<div class="card ${res.wrong.length ? 'warn-card' : 'ok-card'}">Übung: ${res.earned} von ${res.total} richtig.${res.wrong.length ? ' Schau dir die Erklärungen an und probiere es nochmal — die Übung zählt nicht für die Freischaltung.' : ' Sehr gut!'}</div>`;
+    });
+
+    // Wissenstest
+    const form = main.querySelector('.quiz');
+    bindEval(form, () => {
+      const answers = collectAnswers(form, l.quiz);
+      if (!checkAnswered(form, l.quiz, answers)) return;
+      const res = E.gradeQuiz(l.quiz, answers);
+      showFeedback(form, l.quiz, answers, res);
+      onQuizGraded(id, l, res, form);
+    });
+  }
+
+  function onQuizGraded(id, l, res, form) {
+    const s = STORE.get();
+    const prev = s.progress.lessons[id] || { attempts: 0 };
+    const wasDone = prev.status === 'done';
+    const today = STORE.todayISO();
+    STORE.markLearningToday();
+
+    if (res.passed || wasDone) {
+      // Bestanden bleibt bestanden — ein schwächerer Wiederholungsversuch nimmt nichts weg.
+      s.progress.lessons[id] = {
+        status: 'done',
+        score: Math.max(res.passed ? res.scorePct : 0, prev.score || 0),
+        attempts: (prev.attempts || 0) + 1,
+        completedAt: prev.completedAt || new Date().toISOString()
+      };
+      if (res.passed) {
+        const pick = l.quiz.filter(q => q.riskCritical || res.wrong.includes(q.id)).slice(0, 4);
+        for (const q of pick) {
+          if (!s.reviews.find(r => r.questionId === q.id)) {
+            const nr = E.nextReview(-1, true, today);
+            s.reviews.push({ questionId: q.id, lessonId: id, intervalIdx: nr.intervalIdx, dueDate: nr.dueDate });
+          }
+        }
+      }
+      // Phase 0 als abgeschlossen persistieren, falls komplett
+      if (DATA.phase0Lessons.every(x => x.id === id || isDone(x.id)) && DATA.phase0Lessons.every(x => !!DATA.lessons[x.id] ? true : false)) {
+        s.progress.phases['0'] = { status: 'done' };
+      }
+      const next = nextOpenLesson();
+      if (next && next.type === 'lesson') s.progress.currentLesson = next.id;
+      STORE.logEvent(res.passed ? 'lesson_passed' : 'lesson_repeat', `${id} mit ${Math.round(res.scorePct)} %`);
+      STORE.save();
+      const msg = res.passed
+        ? `<b>🎉 Bestanden mit ${Math.round(res.scorePct)} %!</b> Lies unten die Zusammenfassung — sie ist Teil der Lektion.`
+        : `<b>Diese Lektion bleibt bestanden</b> (beste Punktzahl ${Math.round(s.progress.lessons[id].score)} %). Heute waren es ${Math.round(res.scorePct)} % — schau dir die Erklärungen an.`;
+      form.querySelector('.quiz-result').innerHTML = `<div class="card ok-card">${msg}</div>`;
+      const sum = $('.summary-box'); sum.style.display = 'block';
+      sum.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      s.progress.lessons[id] = { status: 'attempted', score: Math.max(res.scorePct, prev.score || 0), attempts: (prev.attempts || 0) + 1 };
+      STORE.logEvent('lesson_failed', `${id} mit ${Math.round(res.scorePct)} %`);
+      STORE.save();
+      const nums = wrongNumbers(l.quiz, res);
+      const reason = res.riskCriticalFailed.length
+        ? `Eine risikokritische Frage (🛡️) war falsch — sie muss sitzen, bevor es weitergeht.`
+        : `Du brauchst mindestens 80 % (aktuell ${Math.round(res.scorePct)} %).`;
+      form.querySelector('.quiz-result').innerHTML = `<div class="card warn-card"><b>Noch nicht bestanden.</b> ${reason}<br>Schau dir die Erklärungen bei Frage ${nums.join(', ')} an und versuche es direkt nochmal — ohne Wartezeit, ohne Abzug.</div>`;
+      addRetryButton(form, l.quiz);
+    }
+  }
+
+  // ---------- Ansicht: Prüfung Modul R ----------
+  function viewPruefung(examId) {
+    if (examId !== 'R-EXAM') { go('lernpfad'); return; }
+    const exam = DATA.examR;
+    const s = STORE.get();
+    const allDone = moduleRDoneCount() === DATA.moduleR.lessons.length;
+    const ex = s.progress.exams['R-EXAM'];
+
+    if (!allDone && !examRPassed()) {
+      shell('lernpfad', `${navLink('lernpfad', 'back', '← Lernpfad')}<h1>${esc(exam.title)}</h1>
+        <div class="card warn-card">🔒 Erst alle 5 Lektionen des Moduls abschließen — dann öffnet sich die Prüfung.</div>
+        ${navBtn('lernpfad', 'btn', 'Zum Lernpfad')}`);
+      return;
+    }
+
+    // Bereits bestanden: Ergebnis-Karte statt leerer Prüfung
+    if (examRPassed() && !viewPruefung._retake) {
+      const when = ex.completedAt ? new Date(ex.completedAt).toLocaleDateString('de-DE') : '';
+      shell('lernpfad', `${navLink('lernpfad', 'back', '← Lernpfad')}
+        <h1>📝 ${esc(exam.title)}</h1>
+        <div class="card ok-card"><b>✅ Bestanden${when ? ' am ' + when : ''} mit ${Math.round(ex.score)} %</b> (${ex.attempts} Versuch${ex.attempts > 1 ? 'e' : ''}).<br>
+        Das Modul ist abgeschlossen — dein Fundament steht.</div>
+        ${navBtn('heute', 'btn primary', 'Weiter zum nächsten Schritt →')}
+        <button class="btn" type="button" id="btn-retake">Prüfung freiwillig wiederholen</button>`);
+      $('#btn-retake').addEventListener('click', () => { viewPruefung._retake = true; render(); });
+      return;
+    }
+    viewPruefung._retake = false;
+
+    const lastLine = ex && !ex.passed ? `<p class="muted small">Letzter Versuch: ${Math.round(ex.score)} % · ${ex.attempts} Versuch${ex.attempts > 1 ? 'e' : ''} — Wiederholen kostet nichts.</p>` : '';
+
+    shell('lernpfad', `
+      ${navLink('lernpfad', 'back', '← Lernpfad')}
+      <h1>📝 ${esc(exam.title)}</h1>
+      <div class="card goal">${esc(exam.intro)}</div>
+      ${lastLine}
+      <form class="quiz">${exam.questions.map((q, i) => questionHtml(q, i)).join('')}
+        <div class="exam-progress muted" aria-live="polite">0 von ${exam.questions.length} beantwortet</div>
+        <button class="btn primary js-eval" type="button">Prüfung auswerten</button>
+        <div class="quiz-result" role="status" aria-live="polite"></div>
+      </form>
+    `);
+    const form = $('.quiz');
+
+    // Live-Zähler
+    const counter = form.querySelector('.exam-progress');
+    const updateCounter = () => {
+      const a = collectAnswers(form, exam.questions);
+      const n = exam.questions.filter(q => a[q.id] != null && a[q.id] !== '').length;
+      counter.textContent = `${n} von ${exam.questions.length} beantwortet`;
+    };
+    form.addEventListener('change', updateCounter);
+    form.addEventListener('input', updateCounter);
+
+    bindEval(form, () => {
+      const answers = collectAnswers(form, exam.questions);
+      if (!checkAnswered(form, exam.questions, answers)) return;
+      const res = E.gradeQuiz(exam.questions, answers);
+      showFeedback(form, exam.questions, answers, res);
+      const s2 = STORE.get();
+      const prev = s2.progress.exams['R-EXAM'] || { attempts: 0 };
+      const wasPassed = !!prev.passed;
+      STORE.markLearningToday();
+      if (res.passed || wasPassed) {
+        s2.progress.exams['R-EXAM'] = {
+          passed: true,
+          score: Math.max(res.passed ? res.scorePct : 0, prev.score || 0),
+          attempts: (prev.attempts || 0) + 1,
+          completedAt: prev.completedAt || new Date().toISOString()
+        };
+        STORE.logEvent('exam_passed', `R-EXAM mit ${Math.round(res.scorePct)} %`);
+        STORE.save();
+        form.querySelector('.quiz-result').innerHTML = `<div class="card ok-card"><b>🎉 Prüfung bestanden mit ${Math.round(res.scorePct)} %!</b><br>
+          Das Modul „Risiko, Verlust und Positionsgröße" ist abgeschlossen — das Fundament steht. Dein Coach überträgt das Ergebnis in den Tracker.</div>
+          <div style="margin-top:10px">${navBtn('heute', 'btn primary', 'Weiter zum nächsten Schritt →')}</div>`;
+      } else {
+        s2.progress.exams['R-EXAM'] = { passed: false, score: Math.max(res.scorePct, prev.score || 0), attempts: (prev.attempts || 0) + 1 };
+        STORE.logEvent('exam_failed', `R-EXAM mit ${Math.round(res.scorePct)} %`);
+        STORE.save();
+        const nums = wrongNumbers(exam.questions, res);
+        const reason = res.riskCriticalFailed.length ? 'Mindestens eine risikokritische Frage (🛡️) war falsch.' : `Du brauchst mindestens 80 % (aktuell ${Math.round(res.scorePct)} %).`;
+        form.querySelector('.quiz-result').innerHTML = `<div class="card warn-card"><b>Noch nicht bestanden.</b> ${reason} Schau dir Frage ${nums.join(', ')} an, wiederhole bei Bedarf die passende Lektion und versuche es erneut — so oft du willst.</div>`;
+        addRetryButton(form, exam.questions);
+      }
+    });
+  }
+
+  // ---------- Ansicht: Wiederholen ----------
+  function findQuestion(qid) {
+    for (const lid of Object.keys(DATA.lessons)) {
+      const q = DATA.lessons[lid].quiz.find(x => x.id === qid);
+      if (q) return q;
+    }
+    return DATA.examR.questions.find(x => x.id === qid) || null;
+  }
+
+  function viewWiederholen() {
+    const s = STORE.get();
+    // Verwaiste Einträge (Frage existiert nicht mehr) entfernen
+    const before = s.reviews.length;
+    s.reviews = s.reviews.filter(r => findQuestion(r.questionId));
+    if (s.reviews.length !== before) STORE.save();
+
+    const today = STORE.todayISO();
+    const due = E.dueReviews(s.reviews, today);
+    if (!due.length) {
+      shell('heute', `${navLink('heute', 'back', '← Heute')}<h1>Wiederholung</h1><div class="card ok-card">Nichts fällig. 👍 Wiederholungen erscheinen hier 1, 3, 7 und 21 Tage nach einer bestandenen Lektion.</div>${navBtn('heute', 'btn', 'Zurück')}`);
+      return;
+    }
+    const qs = due.map(r => findQuestion(r.questionId));
+    shell('heute', `
+      ${navLink('heute', 'back', '← Heute')}
+      <h1>Wiederholung (${qs.length})</h1>
+      <p class="muted">Kurz und knackig — richtig beantwortete Fragen kommen in größeren Abständen wieder.</p>
+      <form class="quiz">${qs.map((q, i) => questionHtml(q, i)).join('')}
+        <button class="btn primary js-eval" type="button">Auswerten</button>
+        <div class="quiz-result" role="status" aria-live="polite"></div>
+      </form>
+    `);
+    const form = $('.quiz');
+    bindEval(form, () => {
+      const answers = collectAnswers(form, qs);
+      if (!checkAnswered(form, qs, answers)) return;
+      const res = E.gradeQuiz(qs, answers);
+      showFeedback(form, qs, answers, res);
+      STORE.markLearningToday();
+      for (const r of due) {
+        const ok = !res.wrong.includes(r.questionId);
+        const nr = E.nextReview(ok ? r.intervalIdx : -1, ok, today);
+        r.intervalIdx = nr.intervalIdx; r.dueDate = nr.dueDate;
+      }
+      STORE.logEvent('review_done', `${qs.length - res.wrong.length}/${qs.length} richtig`);
+      STORE.save();
+      form.querySelector('.quiz-result').innerHTML = `<div class="card ${res.wrong.length ? 'warn-card' : 'ok-card'}">${qs.length - res.wrong.length} von ${qs.length} richtig. ${res.wrong.length ? 'Falsche Fragen kommen morgen wieder.' : 'Alles sitzt — nächste Wiederholung in ein paar Tagen.'}</div>
+        <div style="margin-top:10px">${navBtn('heute', 'btn primary', 'Weiter →')}</div>`;
+    });
+  }
+
+  // ---------- Ansicht: Glossar ----------
+  function viewGlossar() {
+    const rows = DATA.glossary.map(g => `<details class="term glossary-term" data-term="${esc(g.term.toLowerCase())}"><summary>${esc(g.term)}</summary><p>${esc(g.def)}</p></details>`).join('');
+    shell('glossar', `
+      <h1>Glossar</h1>
+      <input type="search" id="gl-search" class="search" placeholder="Begriff suchen … (${DATA.glossary.length} Einträge)">
+      <div id="gl-list">${rows}</div>
+      <p id="gl-empty" class="muted" style="display:none">Kein Eintrag gefunden — frag deinen Coach, er erklärt es dir und ergänzt den Begriff.</p>
+    `);
+    $('#gl-search').addEventListener('input', ev => {
+      const v = ev.target.value.trim().toLowerCase();
+      let visible = 0;
+      document.querySelectorAll('.glossary-term').forEach(d => {
+        const show = !v || d.dataset.term.includes(v) || d.textContent.toLowerCase().includes(v);
+        d.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      $('#gl-empty').style.display = visible ? 'none' : 'block';
+    });
+  }
+
+  // ---------- Ansicht: Fortschritt ----------
+  function viewFortschritt() {
+    const s = STORE.get();
+    const rDone = moduleRDoneCount();
+    const rPct = Math.round(((rDone + (examRPassed() ? 1 : 0)) / (DATA.moduleR.lessons.length + 1)) * 100);
+    const p0 = phase0DoneCount();
+    const p0Pct = Math.round((p0 / DATA.phase0Lessons.length) * 100);
+    const hasResults = Object.keys(s.progress.lessons).length > 0;
+
+    const lessonRows = Object.entries(s.progress.lessons).map(([id, l]) => {
+      const title = DATA.lessons[id]?.title || id;
+      return `<tr><td>${esc(id)}</td><td>${esc(title)}</td><td>${l.status === 'done' ? '✅ bestanden' : '🔁 in Arbeit'}</td><td>${l.score != null ? Math.round(l.score) + ' %' : '–'}</td><td>${l.attempts || 0}</td></tr>`;
+    }).join('');
+
+    const krit = DATA.echtgeldKriterien.map((k, i) => {
+      const done = (i === 1 && examRPassed());
+      return `<li class="${done ? 'crit-done' : ''}">${done ? '✅' : '⬜'} ${esc(k)}${done ? ' <span class="muted small">(in der App bestanden — Coach bestätigt im Tracker)</span>' : ''}</li>`;
+    }).join('');
+
+    shell('fortschritt', `
+      <h1>Fortschritt</h1>
+      ${hasResults ? '' : `<div class="card next-card"><b>Noch keine Ergebnisse.</b> Starte mit deiner ersten Lektion — sie dauert nur 10–15 Minuten.<br><br>${navBtn('lektion/0.1', 'btn primary', 'Lektion 0.1 starten')}</div>`}
+      <div class="card">
+        <h2>🛡️ Risikomodul</h2>
+        <div class="bar"><div class="bar-fill" style="width:${rPct}%"></div></div>
+        <p class="muted">${rDone} / ${DATA.moduleR.lessons.length} Lektionen · Prüfung: ${examRPassed() ? 'bestanden ✅' : 'offen'}</p>
+        <h2>Phase 0 — Orientierung</h2>
+        <div class="bar"><div class="bar-fill" style="width:${p0Pct}%"></div></div>
+        <p class="muted">${p0} / ${DATA.phase0Lessons.length} Lektionen (weitere Inhalte folgen schrittweise)</p>
+      </div>
+      ${lessonRows ? `<div class="card"><h2>Einzelergebnisse</h2><div class="tablewrap"><table>
+        <thead><tr><th>Nr.</th><th>Lektion</th><th>Status</th><th>Beste Punktzahl</th><th>Versuche</th></tr></thead>
+        <tbody>${lessonRows}</tbody></table></div>
+        <p class="muted small">Versuche werden gezählt, aber nie bestraft — Wiederholen ist Teil des Lernens.</p></div>` : ''}
+      <div class="card">
+        <h2>Echtgeld-Kriterien</h2>
+        <p class="muted small">Die App schaltet Echtgeld niemals frei. Auch bei Erfüllung aller Kriterien gilt: Ausbildungsanforderungen erfüllt — eine eigenständige Entscheidung und ggf. professionelle Beratung bleiben erforderlich.</p>
+        <ul class="crit">${krit}</ul>
+      </div>
+    `);
+  }
+
+  // ---------- Ansicht: Einstellungen ----------
+  function viewEinstellungen() {
+    const s = STORE.get();
+    shell('einstellungen', `
+      <h1>Einstellungen</h1>
+      <div class="card">
+        <h2>Profil & Lernkonto</h2>
+        <label class="calc-field"><span>Name</span><input type="text" id="set-name" value="${esc(s.profile.name)}" maxlength="40"></label>
+        <label class="calc-field"><span>Lernkapital (AED, Simulation)</span><input type="text" inputmode="decimal" id="set-cap" value="${esc(String(s.settings.capitalAED))}"></label>
+        <label class="calc-field"><span>Risiko pro Trade</span>
+          <select id="set-risk">
+            <option value="0.25" ${s.settings.riskPerTradePct === 0.25 ? 'selected' : ''}>0,25 % (vorsichtig — empfohlen für den Start)</option>
+            <option value="0.5" ${s.settings.riskPerTradePct === 0.5 ? 'selected' : ''}>0,5 % (Standard der Ausbildung)</option>
+            <option value="1" disabled>1 % — erst nach nachgewiesener Kompetenz (Coach schaltet frei)</option>
+          </select></label>
+        <label class="calc-field"><span>Simulierte Gebühr je Order (AED)</span><input type="text" inputmode="decimal" id="set-fee" value="${esc(String(s.settings.feePerOrderAED))}"></label>
+        <button class="btn primary" type="button" id="set-save">Speichern</button>
+        <span id="set-msg" class="muted small" aria-live="polite"></span>
+      </div>
+      <div class="card">
+        <h2>Daten</h2>
+        <p class="muted small">Alle Daten bleiben auf diesem Gerät. Exportiere regelmäßig eine Sicherung nach <code>03_Backups/</code>.</p>
+        <button class="btn" type="button" id="btn-export">⬇️ Fortschritt exportieren (JSON)</button>
+        <label class="btn file-btn">⬆️ Fortschritt importieren<input type="file" id="btn-import" accept=".json,application/json" hidden></label>
+        <button class="btn danger" type="button" id="btn-reset">🗑️ Alles zurücksetzen</button>
+        <div id="data-msg" class="muted small" aria-live="polite" style="margin-top:8px"></div>
+        <div id="export-fallback" style="display:none">
+          <p class="muted small">Falls kein Download startet (z. B. in der Vorschau): Text unten kopieren und als <code>ta-progress-export.json</code> speichern.</p>
+          <textarea id="export-text" class="copybox" rows="6" readonly></textarea>
+          <button class="btn" type="button" id="btn-copy">📋 In Zwischenablage kopieren</button>
+        </div>
+      </div>
+      <div class="card muted-card small">
+        Trading Academy V1.1 · Build ${esc(DATA.meta.build)} · Nur Simulation, kein echtes Geld, keine Anlageberatung.<br>
+        Speicherstatus: ${STORE.storageOk ? '✅ lokale Speicherung aktiv' : '⚠️ Speicherung blockiert (Vorschau) — auf dem Mac öffnen!'}
+      </div>
+    `);
+    const dataMsg = $('#data-msg');
+
+    $('#set-save').addEventListener('click', () => {
+      const s2 = STORE.get();
+      s2.profile.name = $('#set-name').value.trim() || s2.profile.name;
+      const cap = E.parseNum($('#set-cap').value); if (cap > 0) s2.settings.capitalAED = cap;
+      s2.settings.riskPerTradePct = parseFloat($('#set-risk').value);
+      const fee = E.parseNum($('#set-fee').value); if (fee >= 0) s2.settings.feePerOrderAED = fee;
+      STORE.save();
+      $('#set-msg').textContent = 'Gespeichert ✓';
+      setTimeout(() => { const m = $('#set-msg'); if (m) m.textContent = ''; }, 2000);
+    });
+
+    $('#btn-export').addEventListener('click', () => {
+      const json = STORE.exportJSON();
+      let downloaded = false;
+      try {
+        const blob = new Blob([json], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `ta-progress-export-${STORE.todayISO()}.json`;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+        downloaded = true;
+      } catch (e) { downloaded = false; }
+      // Fallback immer anbieten — in Sandboxen schlägt der Download still fehl.
+      $('#export-fallback').style.display = 'block';
+      $('#export-text').value = json;
+      dataMsg.textContent = downloaded ? 'Export gestartet — prüfe deinen Download-Ordner. Unten zusätzlich der Text zum Kopieren.' : 'Download nicht möglich — bitte Text unten kopieren.';
+    });
+    $('#btn-copy').addEventListener('click', () => {
+      const ta = $('#export-text');
+      ta.select();
+      let ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) {}
+      if (!ok && navigator.clipboard) navigator.clipboard.writeText(ta.value).then(() => { dataMsg.textContent = 'Kopiert ✓'; }).catch(() => {});
+      else dataMsg.textContent = ok ? 'Kopiert ✓' : 'Bitte manuell kopieren (Cmd+C).';
+    });
+
+    $('#btn-import').addEventListener('change', ev => {
+      const f = ev.target.files[0];
+      if (!f) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try { STORE.importJSON(reader.result); dataMsg.textContent = 'Import erfolgreich ✓'; setTimeout(render, 600); }
+        catch (e) { dataMsg.textContent = '⚠️ Import fehlgeschlagen: ' + e.message; }
+      };
+      reader.onerror = () => { dataMsg.textContent = '⚠️ Datei konnte nicht gelesen werden.'; };
+      reader.readAsText(f);
+    });
+
+    // Zweistufiger Reset ohne confirm() (Dialoge sind in Sandboxen stumm)
+    $('#btn-reset').addEventListener('click', () => {
+      if ($('#btn-reset-really')) return;
+      const b = document.createElement('button');
+      b.id = 'btn-reset-really';
+      b.type = 'button';
+      b.className = 'btn danger';
+      b.textContent = '❗ Wirklich ALLES unwiderruflich löschen? → Ja, endgültig löschen';
+      b.addEventListener('click', () => { STORE.reset(); go('heute'); });
+      dataMsg.textContent = 'Tipp: Vorher exportieren. Der rote Button löscht endgültig.';
+      $('#btn-reset').after(b);
+    });
+  }
+
+  // ---------- Router ----------
+  function render() {
+    const s = STORE.get();
+    if (!s.profile.contractAccepted) { renderOnboarding(); return; }
+    const [view, arg] = (CURRENT || 'heute').split('/');
+    if (view === 'heute') viewHeute();
+    else if (view === 'lernpfad') viewLernpfad();
+    else if (view === 'lektion' && arg) viewLektion(arg);
+    else if (view === 'pruefung' && arg) viewPruefung(arg);
+    else if (view === 'wiederholen') viewWiederholen();
+    else if (view === 'glossar') viewGlossar();
+    else if (view === 'fortschritt') viewFortschritt();
+    else if (view === 'einstellungen') viewEinstellungen();
+    else viewHeute();
+  }
+
+  function init() {
+    STORE.load();
+    CURRENT = parseHash() || 'heute';
+    render();
+  }
+  if (document.readyState !== 'loading') init();
+  else window.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
+  navigator.serviceWorker.register('./sw.js').catch(function(){});
+}
+</script>
+</body>
+</html>
