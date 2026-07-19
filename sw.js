@@ -1,5 +1,7 @@
-/* Trading Academy — Offline-Cache (Cache-first, aktualisiert im Hintergrund) */
-const CACHE = 'ta-v1_3';
+/* Trading Academy — Offline-Cache.
+   Strategie: Netz zuerst (immer die neueste Version), Cache nur als Offline-Fallback.
+   So bekommt das Gerät Updates sofort beim ersten Öffnen mit Internet. */
+const CACHE = 'ta-v1_4';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -13,12 +15,12 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   e.respondWith(
-    caches.match(e.request).then(cached => {
-      const fresh = fetch(e.request).then(res => {
-        if (res && res.ok) caches.open(CACHE).then(c => c.put(e.request, res.clone()));
-        return res;
-      }).catch(() => cached);
-      return cached || fresh;
-    })
+    fetch(e.request).then(res => {
+      if (res && res.ok) {
+        const copy = res.clone();
+        caches.open(CACHE).then(c => c.put(e.request, copy));
+      }
+      return res;
+    }).catch(() => caches.match(e.request).then(c => c || caches.match('./index.html')))
   );
 });
