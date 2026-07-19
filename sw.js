@@ -1,5 +1,5 @@
 /* Trading Academy — Offline-Cache (Cache-first, aktualisiert im Hintergrund) */
-const CACHE = 'ta-v1_2';
+const CACHE = 'ta-v1_3';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
